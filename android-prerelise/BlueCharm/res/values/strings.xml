@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, BlueCharmActivity!</string>
+    <string name="app_name">BlueCharm</string>
+    <string name="refresh_label">Refresh</string>
+    <string name="save_label">Save</string>
+    <string name="exit_label">Exit</string>
+    <string name="about_label">About</string>
+
+</resources>
