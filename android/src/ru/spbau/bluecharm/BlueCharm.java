@@ -19,6 +19,7 @@ import android.widget.ListView;
 public class BlueCharm extends Activity {
     public static final int REQUEST_ENABLE_BT = 1;
     private final ArrayList<String> data = new ArrayList<String>();
+    private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mArrayAdapter;
     private BroadcastReceiver mReceiver;
     
@@ -30,18 +31,22 @@ public class BlueCharm extends Activity {
         mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, data);
         ((ListView) findViewById(R.id.blueDevices)).setAdapter(mArrayAdapter);
         
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter != null) {
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter != null) {
         	int responseEnableBluetooth;
-	        if (!bluetoothAdapter.isEnabled()) {
+	        if (!mBluetoothAdapter.isEnabled()) {
 	            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 	            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 	        }
-	        registerAdapter(bluetoothAdapter);
-        } else {
-        	// TODO: notify user he is stupid 
+	        registerAdapter();
         }
     }
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterAdapter();
+	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -49,7 +54,7 @@ public class BlueCharm extends Activity {
 		case REQUEST_ENABLE_BT:
 			if (resultCode != RESULT_OK) {
 				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);		
-				// TODO: Die if bluetooth didnt turn on
+				finish();
 			}
 			break;			
 		default:
@@ -58,7 +63,7 @@ public class BlueCharm extends Activity {
 		}
 	}
 	
-	private void registerAdapter(BluetoothAdapter mBluetoothAdapter) {
+	private void registerAdapter() {
         // Create a BroadcastReceiver for ACTION_FOUND
         mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
@@ -73,13 +78,14 @@ public class BlueCharm extends Activity {
             }
         };
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-		registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy      
+		registerReceiver(mReceiver, filter);    
 		
 		mBluetoothAdapter.startDiscovery();
 	}
 	
-	public void onDestroy(Bundle savedInstanceState) {
-		super.onDestroy();
-		unregisterReceiver(mReceiver);
+	private void unregisterAdapter() {
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+		}
 	}
 }
