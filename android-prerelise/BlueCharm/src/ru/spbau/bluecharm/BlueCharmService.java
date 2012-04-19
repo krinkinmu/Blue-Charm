@@ -10,12 +10,16 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class BlueCharmService extends Service {
@@ -23,6 +27,7 @@ public class BlueCharmService extends Service {
 	public static final int MSG_NOTIFY_LISTENERS = 1;
 	public static final int MSG_SET_LISTENERS = 2;
 	public static final int MSG_GET_LISTENERS = 3;
+	private BroadcastReceiver mReceiver;
 	
 	final static int SERVER_PORT = 10;
 	
@@ -56,6 +61,27 @@ public class BlueCharmService extends Service {
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	
 	@Override
+	public void onCreate() {
+		mReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                Log.d(DPREFIX, action);
+                // When discovery finds a device
+//                if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(action)) {
+//                    
+//                }
+            }
+        };
+		IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+		registerReceiver(mReceiver, filter);   
+	}
+	
+	@Override
+	public void onDestroy() {
+		unregisterReceiver(mReceiver);
+	}
+	
+	@Override
 	public IBinder onBind(Intent intent) {
 		Log.d(DPREFIX, "Service binded");
 		return mMessenger.getBinder();
@@ -67,7 +93,7 @@ public class BlueCharmService extends Service {
 		editor.clear();
 		editor.commit();
 		for (BluetoothDeviceWrapper device : set) {
-			editor.putString(device.getBluetoothDevice().getAddress(), device.getBluetoothDevice().getName());
+			editor.putString(device.getAddress(), device.getName());
 			Log.d(DPREFIX, device.toString());					
 		}					
 		editor.commit();		
