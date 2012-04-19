@@ -1,9 +1,6 @@
 package ru.spbau.bluecharm;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -27,17 +24,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class BlueCharmActivity extends Activity {
-	public static final String DPREFIX = "BLUE_CHARM_ACTIVITY";
-    public static final int REQUEST_ENABLE_BT = 1;
-	private Messenger mService = null;
-	private boolean mBound;
+	public static final String TAG = "BLUE_CHARM_ACTIVITY";
+	public static final int REQUEST_ENABLE_BT = 1;
+	
+	private final ArrayList<String> mData = new ArrayList<String>();
+	private ArrayAdapter<String> mArrayAdapter;
+	private ListView mListView;
+	
     private BluetoothAdapter mBluetoothAdapter;
-    private ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
-    private final ArrayList<BluetoothDeviceWrapper> data = new ArrayList<BluetoothDeviceWrapper>();
-    private BroadcastReceiver mReceiver;  
-    private ListView mListView;
+    private BroadcastReceiver mReceiver;
     
-  
+    private boolean mBound;
+	private Messenger mService;
 	private ServiceConnection mConnection = new	ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mService = new Messenger(service);
@@ -55,10 +53,12 @@ public class BlueCharmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        mArrayAdapter = new ArrayAdapter<BluetoothDeviceWrapper>(this, android.R.layout.simple_list_item_checked, data);
-        mListView =  (ListView) findViewById(R.id.blueDevices);
+        /* Bind View with Model */
+        mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, mData);
+        mListView = (ListView) findViewById(R.id.blueDevices);
         mListView.setAdapter(mArrayAdapter);
         
+        /* Prepare Bluetooth device */
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (mBluetoothAdapter != null) {
 		    if (!mBluetoothAdapter.isEnabled()) {
@@ -68,38 +68,45 @@ public class BlueCharmActivity extends Activity {
 		    registerAdapter();	    
 		}
         
+		/* Set UI event listeners */
         findViewById(R.id.refresh_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				Log.d(DPREFIX, "onClick (refresh button)");
-
+				Log.d(TAG, "onClick (refresh button)");
 			}
         });
-        
         findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				Log.d(DPREFIX, "onClick (save button)");
+				Log.d(TAG, "onClick (save button)");
 				setDevices();
 			}
         });
-        
         findViewById(R.id.exit_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				Log.d(DPREFIX, "onClick (exit button)");
+				Log.d(TAG, "onClick (exit button)");
 				finish();
 			}
         });
-        
         findViewById(R.id.test_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				Log.d(DPREFIX, "onClick (exit button)");
+				Log.d(TAG, "onClick (exit button)");
 				notifyDevices();
 			}
         });
     }
     
     @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	/* Free broadcast receiver */
+    	if (mReceiver != null) {
+    		unregisterReceiver(mReceiver);
+    	}
+    }
+    
+    @Override
     protected void onStart() {
     	super.onStart();
+    	/* Bind to BlueCharService */
     	bindService(new Intent(this, BlueCharmService.class), mConnection,
     			Context.BIND_AUTO_CREATE);
     }
@@ -107,14 +114,20 @@ public class BlueCharmActivity extends Activity {
     protected void onStop() {
     	super.onStop();
     	if (mBound) {
+    		/* Unbind from BlueCharmService */
     		unbindService(mConnection);
     		mBound = false;
     	}
     }
     
-    public void notifyDevices() {
+    /* Test method initiates Bluetooth notification */
+    private void notifyDevices() {
     	if (!mBound) return;
+    	
     	Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
+    	Bundle bundle = new Bundle();
+    	bundle.putString(null, "Test string");
+    	msg.setData(bundle);
     	try {
     		mService.send(msg);
     	} catch (RemoteException e) {
@@ -122,22 +135,22 @@ public class BlueCharmActivity extends Activity {
     	}
     }
     
-    public void setDevices() {
+    /* Save user choice */
+    private void setDevices() {
     	if (!mBound) return;
+    	
     	Message msg = Message.obtain(null, BlueCharmService.MSG_SET_LISTENERS, 0, 0);
     	ArrayList<String> devices = new ArrayList<String>();
     	SparseBooleanArray checked = mListView.getCheckedItemPositions();
-    	for (int i = 0; i < data.size(); ++i) {
+    	for (int i = 0; i < mData.size(); ++i) {
     		if (checked.get(i)) {
-    			devices.add(data.get(i).toString());
+    			devices.add(mData.get(i));
     		}
     	}
  
     	Bundle bundle = new Bundle();
-    	
     	bundle.putStringArrayList(null, devices);
     	msg.setData(bundle);
-    	
     	try {
     		mService.send(msg);
     	} catch (RemoteException e) {
@@ -155,13 +168,12 @@ public class BlueCharmActivity extends Activity {
                     // Get the BluetoothDevice object from the Intent
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // Add the name and address to an array adapter to show in a ListView
-                    mArrayAdapter.add(new BluetoothDeviceWrapper(device));
+                    mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
             }
         };
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-		registerReceiver(mReceiver, filter);   
-		
+		registerReceiver(mReceiver, filter);   	
 		mBluetoothAdapter.startDiscovery();
 	}
 }
