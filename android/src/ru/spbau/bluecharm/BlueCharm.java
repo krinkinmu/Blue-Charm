@@ -1,18 +1,28 @@
 package ru.spbau.bluecharm;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 @SuppressWarnings("unused")
@@ -22,6 +32,7 @@ public class BlueCharm extends Activity {
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayAdapter<String> mArrayAdapter;
     private BroadcastReceiver mReceiver;
+    private final String DEVICES_STORAGE_NAME = "testName";
     
 	@Override
     public void onCreate(Bundle savedInstanceState) {	
@@ -40,6 +51,57 @@ public class BlueCharm extends Activity {
 		    }
 		    registerAdapter();
 		}
+		
+		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
+//		SharedPreferences.Editor editor = devicesStorage.edit();
+//		editor.putString("name", "value");
+//		
+//		editor.commit();
+	
+		Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
+		for (Map.Entry<String, String> device : devices.entrySet()) {
+			mArrayAdapter.add(device.getKey() + device.getValue());
+		}
+		
+		final Button testButton = (Button) findViewById(R.id.Test);
+		testButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	String mac = "123";
+            	BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mac);
+            	UUID uuid = UUID.randomUUID();
+            	BluetoothSocket socket;
+            	try {
+            		socket = device.createRfcommSocketToServiceRecord(uuid);
+            	} catch (IOException e) {
+            		Log.d("BLUETOOTH", "failed to create socket");
+            		Log.d("BLUETOOTH", e.getMessage());
+            		return; // TODO: deal with it
+            	}
+            	
+            	try {
+            		socket.connect();
+            		try {
+            			OutputStream out = socket.getOutputStream();
+            			out.write("SOCKET_TEST".getBytes());
+            		} catch (IOException e) {
+            			Log.d("BLUETOOTH", "socket IO exception");
+            			Log.d("BLUETOOTH", e.getMessage());
+					}
+            	} catch (IOException e) {
+            		Log.d("BLUETOOTH", "failed to connect to " + device.getName());
+            		Log.d("BLUETOOTH", e.getMessage());
+            		return;
+            	} finally {
+                	try {
+                		socket.close();
+                	} catch (IOException e) {
+                		Log.d("BLUETOOTH", "failed to close socket");
+                		Log.d("BLUETOOTH", e.getMessage());
+                		return;
+    				}
+            	}
+            }
+        });
     }
 	
 	@Override
