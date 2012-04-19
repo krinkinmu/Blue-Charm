@@ -4,4 +4,35 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <ListView
+        android:id="@+id/blueDevices"
+        android:layout_width="fill_parent"
+        android:layout_height="304dp"
+        android:choiceMode="multipleChoice" >
+
+        <!-- Preview: listitem=@android:layout/simple_list_item_checked -->
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/controlLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+
+        <Button
+            android:id="@+id/saveAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="30dip"
+            android:text="@string/save_button_label" />
+
+        <Button
+            android:id="@+id/Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="30dip"
+            android:text="@string/test_button_layout" />
+
+    </LinearLayout>
+
 </LinearLayout>

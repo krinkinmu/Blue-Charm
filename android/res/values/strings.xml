@@ -3,5 +3,7 @@
 
     <string name="hello">Hello World, BlueCharm!</string>
     <string name="app_name">BlueCharm</string>
+    <string name="save_button_label">Save</string>
+    <string name="test_button_layout">Test</string>
 
 </resources>
