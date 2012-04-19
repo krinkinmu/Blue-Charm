@@ -32,14 +32,14 @@ public class BlueCharm extends Activity {
         ((ListView) findViewById(R.id.blueDevices)).setAdapter(mArrayAdapter);
         
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter != null) {
-        	int responseEnableBluetooth;
-	        if (!mBluetoothAdapter.isEnabled()) {
-	            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-	        }
-	        registerAdapter();
-        }
+		if (mBluetoothAdapter != null) {
+			int responseEnableBluetooth;
+		    if (!mBluetoothAdapter.isEnabled()) {
+		        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		    }
+		    registerAdapter();
+		}
     }
 	
 	@Override
@@ -53,7 +53,7 @@ public class BlueCharm extends Activity {
 		switch (requestCode) {
 		case REQUEST_ENABLE_BT:
 			if (resultCode != RESULT_OK) {
-				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);		
+				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
 				finish();
 			}
 			break;			
