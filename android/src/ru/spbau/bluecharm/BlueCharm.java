@@ -29,7 +29,11 @@ public class BlueCharm extends Activity {
         
         mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, data);
         ((ListView) findViewById(R.id.blueDevices)).setAdapter(mArrayAdapter);
-        
+    }
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
         	int responseEnableBluetooth;
@@ -41,7 +45,16 @@ public class BlueCharm extends Activity {
         } else {
         	// TODO: notify user he is stupid 
         }
-    }
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+			mReceiver = null;
+		}
+	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -49,7 +62,7 @@ public class BlueCharm extends Activity {
 		case REQUEST_ENABLE_BT:
 			if (resultCode != RESULT_OK) {
 				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);		
-				// TODO: Die if bluetooth didnt turn on
+				// TODO: Die if bluetooth didn't turn on
 			}
 			break;			
 		default:
@@ -80,6 +93,8 @@ public class BlueCharm extends Activity {
 	
 	public void onDestroy(Bundle savedInstanceState) {
 		super.onDestroy();
-		unregisterReceiver(mReceiver);
+		if (mReceiver != null) {
+			unregisterReceiver(mReceiver);
+		}
 	}
 }
