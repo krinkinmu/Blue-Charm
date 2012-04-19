@@ -1,6 +1,7 @@
 package ru.spbau.bluecharm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -124,15 +125,19 @@ public class BlueCharmActivity extends Activity {
     public void setDevices() {
     	if (!mBound) return;
     	Message msg = Message.obtain(null, BlueCharmService.MSG_SET_LISTENERS, 0, 0);
-    	Set<BluetoothDeviceWrapper> devices = new HashSet<BluetoothDeviceWrapper>();
+    	ArrayList<String> devices = new ArrayList<String>();
     	SparseBooleanArray checked = mListView.getCheckedItemPositions();
     	for (int i = 0; i < data.size(); ++i) {
     		if (checked.get(i)) {
-    			devices.add(data.get(i));
+    			devices.add(data.get(i).toString());
     		}
     	}
  
-    	msg.obj = devices;
+    	Bundle bundle = new Bundle();
+    	
+    	bundle.putStringArrayList(null, devices);
+    	msg.setData(bundle);
+    	
     	try {
     		mService.send(msg);
     	} catch (RemoteException e) {

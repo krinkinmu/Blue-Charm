@@ -3,8 +3,8 @@ package ru.spbau.bluecharm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -34,7 +34,6 @@ public class BlueCharmService extends Service {
 	private final String DEVICES_STORAGE_NAME = "blueCharmDevices";
 	
 	private class IncomingHandler extends Handler {
-		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -44,9 +43,9 @@ public class BlueCharmService extends Service {
 				break;
 			case MSG_SET_LISTENERS:
 				Log.d(DPREFIX, "MSG_SET_LISTENERS recieved");
-				if (msg.obj instanceof Set) {
-					saveDevices((Set<BluetoothDeviceWrapper>) msg.obj);					
-				}
+				ArrayList<String> list = msg.getData().getStringArrayList(null);
+				Log.d(DPREFIX, "List size:" + list.size());
+				saveDevices(list);					
 				break;
 			case MSG_GET_LISTENERS:
 				Log.d(DPREFIX, "MSG_GET_LISTENERS recieved");
@@ -60,22 +59,7 @@ public class BlueCharmService extends Service {
 	
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	
-	@Override
-	public void onCreate() {
-		mReceiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                Log.d(DPREFIX, action);
-                // When discovery finds a device
-//                if (TelephonyManager.ACTION_PHONE_STATE_CHANGED.equals(action)) {
-//                    
-//                }
-            }
-        };
-		IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-		registerReceiver(mReceiver, filter);   
-	}
-	
+
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(mReceiver);
@@ -87,18 +71,20 @@ public class BlueCharmService extends Service {
 		return mMessenger.getBinder();
 	}
 	
-	private void saveDevices(Set<BluetoothDeviceWrapper> set) {
+	private void saveDevices(ArrayList<String> list) {
 		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
 		SharedPreferences.Editor editor = devicesStorage.edit();
 		editor.clear();
 		editor.commit();
-		for (BluetoothDeviceWrapper device : set) {
-			editor.putString(device.getAddress(), device.getName());
-			Log.d(DPREFIX, device.toString());					
+		for (String device : list) {
+			BluetoothDeviceWrapper wrapper = new BluetoothDeviceWrapper(device);
+			editor.putString(wrapper.getAddress(), wrapper.getName());
+			Log.d(DPREFIX, wrapper.toString());					
 		}					
 		editor.commit();		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void notifyDevices() {
 		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
 		Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
@@ -121,7 +107,7 @@ public class BlueCharmService extends Service {
     	try {    		
     		Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
     		socket = (BluetoothSocket) m.invoke(device, SERVER_PORT);
-    		Log.d(DPREFIX, "socket created");
+    		Log.d(DPREFIX, "socket created " + device.getAddress());
     	} catch (Exception e) {
     		Log.d(DPREFIX, "Exception: " + e.getMessage());
     		return;
