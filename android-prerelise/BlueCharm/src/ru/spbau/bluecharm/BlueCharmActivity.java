@@ -1,6 +1,7 @@
 package ru.spbau.bluecharm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -60,9 +61,10 @@ public class BlueCharmActivity extends Activity {
     			Context.BIND_AUTO_CREATE);
         
         /* Bind View with Model */
-        mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, mData);
+        mArrayAdapter = new SetListAdapter<String>(this, android.R.layout.simple_list_item_checked, mData);
         mListView = (ListView) findViewById(R.id.blueDevices);
         mListView.setAdapter(mArrayAdapter);
+        
         
         /* Prepare Bluetooth device */
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -115,11 +117,6 @@ public class BlueCharmActivity extends Activity {
     		unbindService(mConnection);
     		mBound = false;
     	}
-    }
-    
-    @Override
-    protected void onStart() {
-    	super.onStart();
     }
     
   
@@ -178,5 +175,27 @@ public class BlueCharmActivity extends Activity {
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 		registerReceiver(mReceiver, filter);   	
 		mBluetoothAdapter.startDiscovery();
+	}
+	
+	private class SetListAdapter<T extends Comparable<T>> extends ArrayAdapter<T> {
+		public SetListAdapter(Context context, int textViewResourceId, List<T> objects) {
+			super(context, textViewResourceId, objects);
+		}
+		
+		@Override
+		public void add(T t) {
+			if (!contains(t)) {
+				super.add(t);
+			}
+		}
+		
+		private boolean contains(T t) {
+			for (int i = 0; i < this.getCount(); ++i) {
+				if (t.equals(this.getItem(i))) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
