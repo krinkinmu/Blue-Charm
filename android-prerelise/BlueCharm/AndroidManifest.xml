@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.spbau.bluecharm"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-sdk android:targetSdkVersion="10" android:minSdkVersion="7" />
     
@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:icon="@drawable/ic_bluecharm"
@@ -32,7 +33,15 @@
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
-        </receiver>  
+        </receiver>
+        <receiver android:enabled="true" android:name=".BootUpReceiver"
+        android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    	</receiver>
     </application>
 
 </manifest>

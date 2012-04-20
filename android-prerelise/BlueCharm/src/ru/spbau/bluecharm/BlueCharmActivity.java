@@ -66,8 +66,7 @@ public class BlueCharmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        final Intent service = new Intent(this, BlueCharmService.class); 
-        
+        final Intent service = new Intent(this, BlueCharmService.class);        
     	startService(service);
         
         /* Bind View with Model */
