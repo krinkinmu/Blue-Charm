@@ -14,6 +14,7 @@ public class SmsNotifier extends BroadcastReceiver {
 	public static final String TAG = "SMS_NOTIFIER";
 	public static final String IN_SMS = "IN_SMS";
 	public static final char DELIMETER = 3;
+	public static final String CHARM = "BLUECHARM";
 	public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	
 	@Override
@@ -31,6 +32,8 @@ public class SmsNotifier extends BroadcastReceiver {
 			IBinder binder = peekService(context, service);
 			if (binder != null) {
 				StringBuilder str = new StringBuilder();
+				str.append(CHARM);
+				str.append(DELIMETER);
 				str.append(IN_SMS);
 				str.append(DELIMETER);
 				str.append(orign);
