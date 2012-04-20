@@ -9,7 +9,7 @@ import android.util.Log;
 public class Util {
 	public static final String TAG = "UTIL";
 	
-	protected static String getContactName(Context context, String number) {
+	public static String getContactName(Context context, String number) {
 		Log.d(TAG, "Searching contact with number: " + number);
 		
 		// define the columns I want the query to return
