@@ -23,7 +23,7 @@ public class BlueCharmService extends Service {
 	public static final int MSG_NOTIFY_LISTENERS = 1;
 	public static final int MSG_SET_LISTENERS = 2;
 	public static final int MSG_GET_LISTENERS = 3;
-	public static final int SERVER_PORT = 10;
+	public static final int SERVER_PORT = 1;
 	public static final String DEVICES_STORAGE_NAME = "blueCharmDevices";
 	
 	/* Handles incoming Intents (Messages) */

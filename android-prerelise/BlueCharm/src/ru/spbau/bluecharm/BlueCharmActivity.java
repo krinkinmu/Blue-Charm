@@ -20,6 +20,8 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -74,24 +76,26 @@ public class BlueCharmActivity extends Activity {
 				Log.d(TAG, "onClick (refresh button)");
 			}
         });
-        findViewById(R.id.save_button).setOnClickListener(new OnClickListener() {
-			public void onClick(View arg0) {
-				Log.d(TAG, "onClick (save button)");
-				setDevices();
-			}
-        });
+        
         findViewById(R.id.exit_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				Log.d(TAG, "onClick (exit button)");
 				finish();
 			}
         });
+        
         findViewById(R.id.test_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				Log.d(TAG, "onClick (exit button)");
 				notifyDevices();
 			}
         });
+        
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+				setDevices();
+			}
+        }); 
     }
     
     @Override
