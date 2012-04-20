@@ -15,7 +15,12 @@ public class BluetoothDeviceWrapper {
 		String[] contents = string.split("\n");
 		mName = contents[0];
 		mAddress = contents[1];
-	}	
+	}
+	
+	public BluetoothDeviceWrapper(String name, String address) {
+		mName = name;
+		mAddress = address;
+	}
 
 	public String getName() {
 		return mName;

@@ -2,6 +2,7 @@ package ru.spbau.bluecharm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -30,6 +32,7 @@ import android.widget.ProgressBar;
 public class BlueCharmActivity extends Activity {
 	public static final String TAG = "BLUE_CHARM_ACTIVITY";
 	public static final int REQUEST_ENABLE_BT = 1;
+	public static final String DEVICES_STORAGE_NAME = "blueCharmDevices";
 	
 	private final ArrayList<BluetoothDeviceWrapper> mData = new ArrayList<BluetoothDeviceWrapper>();
 	private ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
@@ -69,6 +72,7 @@ public class BlueCharmActivity extends Activity {
         
 		if (prepareAdapter(BluetoothAdapter.getDefaultAdapter())) {
 			registerListForFoundedDevices();
+			renewChoices();
 			mBluetoothAdapter.startDiscovery();
 		}
 
@@ -116,6 +120,14 @@ public class BlueCharmActivity extends Activity {
 
     private void renewChoices() {
 		mListView.clearChoices();
+		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
+		@SuppressWarnings("unchecked")
+		Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
+		int i = 0;
+		for (Map.Entry<String, String> device : devices.entrySet()) {
+			mArrayAdapter.add(new BluetoothDeviceWrapper(device.getValue(), device.getKey()));
+			mListView.setItemChecked(i++, true);
+		}
     }
     
 	@Override
