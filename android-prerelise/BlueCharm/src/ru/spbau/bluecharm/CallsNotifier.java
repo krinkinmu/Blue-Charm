@@ -1,7 +1,6 @@
 package ru.spbau.bluecharm;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,16 +21,7 @@ public class CallsNotifier extends BroadcastReceiver {
 		if (binder != null) {
 			sendMessage(intent, binder);
 		} else {
-			Log.d(TAG, "Cannot to bind, start service");
-			ComponentName name = context.startService(service);
-			Log.d(TAG, "Service starting status: " + name);
-			binder = peekService(context, service);
-			if (binder != null) {
-				sendMessage(intent, binder);
-			} else {
-				Log.d(TAG, "BlueCharmService isn't running");
-			}
-			context.stopService(service);
+			Log.d(TAG, "BlueCharmService isn't running");
 		}
 	}
 	
