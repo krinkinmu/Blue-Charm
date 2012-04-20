@@ -65,8 +65,9 @@ public class BlueCharmService extends Service {
 		editor.clear();
 		editor.commit();
 		for (String device : list) {
-			editor.putString(device.split("\n")[1], device.split("\n")[0]);
-			Log.d(TAG, "Device: " + device + " saved");					
+			BluetoothDeviceWrapper wrapper = new BluetoothDeviceWrapper(device);
+			editor.putString(wrapper.getAddress(), wrapper.getName());
+			Log.d(TAG, wrapper.toString());          			
 		}					
 		editor.commit();
 		Log.d(TAG, "Changes commited");
