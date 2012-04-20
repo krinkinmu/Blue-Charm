@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.telephony.TelephonyManager;
 
 public class CallsNotifier extends BlueCharmNotifier {
-	public static final String IN_CALL = "IN_CALL";
+	public static final String TYPE = "IN_CALL";
 
 	@Override
 	protected String buildMessage(Context context, Intent intent) {
@@ -21,6 +21,6 @@ public class CallsNotifier extends BlueCharmNotifier {
 
 	@Override
 	protected String getType(Context context, Intent intent) {
-		return IN_CALL;
+		return TYPE;
 	}
 }

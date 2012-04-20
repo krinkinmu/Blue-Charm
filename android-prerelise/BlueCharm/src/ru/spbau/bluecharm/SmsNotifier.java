@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 
 public class SmsNotifier extends BlueCharmNotifier { 
-	public static final String IN_SMS = "IN_SMS";
+	public static final String TYPE = "IN_SMS";
 	public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 
 	@Override
@@ -18,7 +18,7 @@ public class SmsNotifier extends BlueCharmNotifier {
 
 	@Override
 	protected String getType(Context context, Intent intent) {
-		return IN_SMS;
+		return TYPE;
 	}
 
 	@Override
