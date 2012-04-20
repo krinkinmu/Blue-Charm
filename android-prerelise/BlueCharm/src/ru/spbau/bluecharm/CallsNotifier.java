@@ -3,10 +3,12 @@ package ru.spbau.bluecharm;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class CallsNotifier extends BroadcastReceiver {
@@ -18,6 +20,9 @@ public class CallsNotifier extends BroadcastReceiver {
 		if (binder != null) {
 			Messenger messenger = new Messenger(binder);
 			Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
+			Bundle bundle = new Bundle();
+			bundle.putString(null, intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER));
+			msg.setData(bundle);
 			try {
 				messenger.send(msg);
 			} catch (RemoteException e) {
