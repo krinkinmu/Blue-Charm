@@ -13,6 +13,9 @@ import android.util.Log;
 
 public class CallsNotifier extends BroadcastReceiver {
 	public static final String TAG = "CALLS_NOTIFIER";
+	public static final String MAGIC = "BLUECHARM";
+	public static final String IN_CALL = "IN_CALL";
+	public static final char DELIMITER  = 3;
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -31,7 +34,9 @@ public class CallsNotifier extends BroadcastReceiver {
 			Messenger messenger = new Messenger(binder);
 			Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
 			Bundle bundle = new Bundle();
-			bundle.putString(null, "Call: " + intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER));
+			String data = MAGIC + DELIMITER + IN_CALL + DELIMITER
+					+ intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+			bundle.putString(null, data);
 			msg.setData(bundle);
 			try {
 				messenger.send(msg);
