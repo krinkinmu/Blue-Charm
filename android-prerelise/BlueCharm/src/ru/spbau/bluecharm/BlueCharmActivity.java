@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 public class BlueCharmActivity extends Activity {
 	public static final String TAG = "BLUE_CHARM_ACTIVITY";
@@ -39,6 +40,7 @@ public class BlueCharmActivity extends Activity {
     
     private boolean mBound;
 	private Messenger mService;
+	private BroadcastReceiver mDeviceDiscoveryReceiver;
 	private ServiceConnection mConnection = new	ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mService = new Messenger(service);
@@ -75,6 +77,8 @@ public class BlueCharmActivity extends Activity {
 		    }
 		    registerAdapter();	    
 		}
+		
+		registerProgressBar(); 
         
 		/* Set UI event listeners */
         findViewById(R.id.refresh_button).setOnClickListener(new OnClickListener() {
@@ -97,6 +101,8 @@ public class BlueCharmActivity extends Activity {
 				notifyDevices();
 			}
         });
+        
+//        findViewById(R.id.progressBar1).set);
         
         mListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
@@ -131,6 +137,10 @@ public class BlueCharmActivity extends Activity {
     	if (mReceiver != null) {
     		unregisterReceiver(mReceiver);
     	}
+    	
+		if (mDeviceDiscoveryReceiver != null) {
+			unregisterReceiver(mDeviceDiscoveryReceiver);
+		}
     }
   
     /* Test method initiates Bluetooth notification */
@@ -170,6 +180,21 @@ public class BlueCharmActivity extends Activity {
     		e.printStackTrace();
     	}
     }
+    
+    private void registerProgressBar() {
+    	mDeviceDiscoveryReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				ProgressBar bar = (ProgressBar) findViewById(R.id.progressBar1);
+				bar.setProgress(1);
+				bar.setVisibility(View.INVISIBLE);
+			}
+    	};
+    	
+    	IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+    	registerReceiver(mDeviceDiscoveryReceiver, filter);
+    }
+    
     
 	private void registerAdapter() {
         // Create a BroadcastReceiver for ACTION_FOUND
