@@ -55,9 +55,9 @@ public class BlueCharmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-    	/* Bind to BlueCharService */
-    	bindService(new Intent(this, BlueCharmService.class), mConnection,
-    			Context.BIND_AUTO_CREATE);
+        final Intent service = new Intent(this, BlueCharmService.class); 
+        
+    	startService(service);
         
         /* Bind View with Model */
         mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, mData);
@@ -84,6 +84,7 @@ public class BlueCharmActivity extends Activity {
         findViewById(R.id.exit_button).setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				Log.d(TAG, "onClick (exit button)");
+				stopService(service);
 				finish();
 			}
         });
@@ -103,13 +104,17 @@ public class BlueCharmActivity extends Activity {
     }
     
     @Override
-    protected void onDestroy() {
-    	super.onDestroy();
-    	/* Free broadcast receiver */
-    	if (mReceiver != null) {
-    		unregisterReceiver(mReceiver);
-    	}
-    	
+    protected void onStart() {
+    	super.onStart();
+    	/* Bind to BlueCharService */
+    	bindService(new Intent(this, BlueCharmService.class), mConnection,
+    			Context.BIND_AUTO_CREATE);
+    	mBound = true;
+    }
+    
+    @Override
+    protected void onStop() {
+    	super.onStop();
     	if (mBound) {
     		/* Unbind from BlueCharmService */
     		unbindService(mConnection);
@@ -118,10 +123,13 @@ public class BlueCharmActivity extends Activity {
     }
     
     @Override
-    protected void onStart() {
-    	super.onStart();
+    protected void onDestroy() {
+    	super.onDestroy();
+    	/* Free broadcast receiver */
+    	if (mReceiver != null) {
+    		unregisterReceiver(mReceiver);
+    	}
     }
-    
   
     /* Test method initiates Bluetooth notification */
     private void notifyDevices() {
