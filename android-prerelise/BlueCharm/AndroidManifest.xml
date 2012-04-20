@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:icon="@drawable/ic_bluecharm"
@@ -34,6 +35,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        <!-- 
         <receiver android:enabled="true" android:name=".BootUpReceiver"
         android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
         <intent-filter>
@@ -42,6 +44,7 @@
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
     	</receiver>
+    	 -->
     </application>
 
 </manifest>
