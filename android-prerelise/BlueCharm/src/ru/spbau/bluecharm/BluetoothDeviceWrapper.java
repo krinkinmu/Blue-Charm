@@ -1,9 +1,7 @@
 package ru.spbau.bluecharm;
 
 import android.bluetooth.BluetoothDevice;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
+
 
 public class BluetoothDeviceWrapper {
 	private String mName;
