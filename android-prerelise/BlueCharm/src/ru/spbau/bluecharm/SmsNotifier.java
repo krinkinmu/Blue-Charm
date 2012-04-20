@@ -13,7 +13,12 @@ public class SmsNotifier extends BlueCharmNotifier {
 		Bundle pudsBundle = intent.getExtras();
 		Object[] pdus = (Object[]) pudsBundle.get("pdus");
 		SmsMessage message = SmsMessage.createFromPdu((byte[]) pdus[0]);
-		return message.getOriginatingAddress() + getDelimiter() + message.getDisplayMessageBody();
+		String origin = message.getOriginatingAddress();
+		String name = Util.getContactName(context, origin);
+		if (name != null) {
+			origin = name;
+		}
+		return origin + getDelimiter() + message.getDisplayMessageBody();
 	}
 
 	@Override
