@@ -67,7 +67,7 @@ public class BlueCharmService extends Service {
 		for (String device : list) {
 			BluetoothDeviceWrapper wrapper = new BluetoothDeviceWrapper(device);
 			editor.putString(wrapper.getAddress(), wrapper.getName());
-			Log.d(TAG, wrapper.toString());          			
+			Log.d(TAG, wrapper.toDataString());          			
 		}					
 		editor.commit();
 		Log.d(TAG, "Changes commited");

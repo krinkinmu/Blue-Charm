@@ -27,6 +27,31 @@ public class BluetoothDeviceWrapper {
 	}
 
 	public String toString() {
-		return mName + "\n" + mAddress;    		
+		return mName;    		
 	}
+	
+	public String toDataString() {
+		return mName + "\n" + mAddress;
+	}
+	
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        boolean result = false;
+
+        if (other instanceof BluetoothDeviceWrapper) {
+        	BluetoothDeviceWrapper that = (BluetoothDeviceWrapper) other;
+            result = that.canEqual(this) && (getAddress().equals(that.getAddress()));
+        }
+        
+        return result;
+
+    }
+
+    boolean canEqual(Object other) {
+        return (other instanceof BluetoothDeviceWrapper);
+    }
 }

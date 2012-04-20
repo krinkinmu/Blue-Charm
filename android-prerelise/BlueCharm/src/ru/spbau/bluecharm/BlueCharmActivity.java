@@ -165,7 +165,7 @@ public class BlueCharmActivity extends Activity {
     	SparseBooleanArray checked = mListView.getCheckedItemPositions();
     	for (int i = 0; i < mData.size(); ++i) {
     		if (checked.get(i)) {
-    			devices.add(mData.get(i).toString());
+    			devices.add(mData.get(i).toDataString());
     		}
     	}
  
