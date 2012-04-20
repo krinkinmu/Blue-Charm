@@ -4,7 +4,7 @@ import bluetooth
 from datetime import datetime
 
 server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
-port = 1
+port = 10
 server_sock.bind(("", port))
 server_sock.listen(0)
 
