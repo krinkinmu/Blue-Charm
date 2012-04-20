@@ -28,11 +28,13 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
 		Log.d(TAG, "Intent received: " + intent.getAction());
 		Intent service = new Intent(context, BlueCharmService.class);
 		IBinder binder = peekService(context, service);
-		if (binder != null && isTargetIntent(context, service) ) {
-			sendMessage(MAGIC + getDelimiter() + getType(context, service)
+		if (binder != null) {
+			if (isTargetIntent(context, intent)) {
+			sendMessage(MAGIC + getDelimiter() + getType(context, intent)
 					+ getDelimiter() + buildMessage(context, intent), binder);
+			}
 		} else {
-			Log.d(TAG, "BlueCharmService isn't running");
+			Log.e(TAG, "BlueCharmService isn't running");
 		}
 	}
 	
