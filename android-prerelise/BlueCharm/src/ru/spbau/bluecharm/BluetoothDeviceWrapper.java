@@ -2,6 +2,9 @@ package ru.spbau.bluecharm;
 
 import android.bluetooth.BluetoothDevice;
 
+/**
+ * Immortal class... hmmm... it's magig... BlueCharm!
+ */
 public class BluetoothDeviceWrapper {
 	private String mName;
 	private String mAddress;

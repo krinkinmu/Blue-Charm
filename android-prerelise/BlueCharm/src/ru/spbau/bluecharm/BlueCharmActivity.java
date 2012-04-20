@@ -56,6 +56,11 @@ public class BlueCharmActivity extends Activity {
 		}
 	};
 	
+	/**
+	 * Method called by Android at creation time. It starts BlueCharmService,
+	 * register Bluetooth interface and start discovering. Then connect to
+	 * UI events.
+	 */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +106,7 @@ public class BlueCharmActivity extends Activity {
 			}
         });
         
+        /* Save device user chosen */
         mListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 				setDevices();
@@ -108,16 +114,22 @@ public class BlueCharmActivity extends Activity {
         }); 
     }
     
+    /**
+     * Initiate Bluetooth device discovering
+     */
     private void refreshListView() {
 		if (prepareAdapter(BluetoothAdapter.getDefaultAdapter())) {
 			mBluetoothAdapter.cancelDiscovery();
 			mArrayAdapter.clear();
 			renewChoices();
-			((ProgressBar)findViewById(R.id.progressBar1)).setVisibility(View.VISIBLE);
+			((ProgressBar)findViewById(R.id.progress)).setVisibility(View.VISIBLE);
 			mBluetoothAdapter.startDiscovery();
 		}
 	}
 
+    /**
+     * Update user chosen devices in ListView
+     */
     private void renewChoices() {
 		mListView.clearChoices();
 		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
@@ -130,6 +142,9 @@ public class BlueCharmActivity extends Activity {
 		}
     }
     
+    /**
+     * Called every time, when Activity takes screen. Binds with BlueCharmService
+     */
 	@Override
     protected void onStart() {
     	super.onStart();
@@ -139,6 +154,9 @@ public class BlueCharmActivity extends Activity {
     	mBound = true;
     }
     
+	/**
+	 * Called every time, when Activity goes background. Unbinds from BlueCHarmService
+	 */
     @Override
     protected void onStop() {
     	super.onStop();
@@ -149,6 +167,9 @@ public class BlueCharmActivity extends Activity {
     	}
     }
     
+    /**
+     * Called when Activity closed
+     */
     @Override
     protected void onDestroy() {
     	super.onDestroy();
@@ -162,7 +183,9 @@ public class BlueCharmActivity extends Activity {
 		}
     }
   
-    /* Test method initiates Bluetooth notification */
+    /**
+     * Test method initiates Bluetooth notification
+     * */
     private void notifyDevices() {
     	if (!mBound) return;
     	
@@ -177,7 +200,9 @@ public class BlueCharmActivity extends Activity {
     	}
     }
     
-    /* Save user choice */
+    /**
+     * Save user choice in local database
+     */
     private void setDevices() {
     	if (!mBound) return;
     	
@@ -200,11 +225,14 @@ public class BlueCharmActivity extends Activity {
     	}
     }
     
+    /**
+     * Bind ProgressBar with Bluetooth device discovering
+     */
     private void registerProgressBar() {
     	mDeviceDiscoveryReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				ProgressBar bar = (ProgressBar) findViewById(R.id.progressBar1);
+				ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
 				bar.setProgress(1);
 				bar.setVisibility(View.INVISIBLE);
 			}
@@ -214,6 +242,9 @@ public class BlueCharmActivity extends Activity {
     	registerReceiver(mDeviceDiscoveryReceiver, filter);
     }
     
+    /**
+     * Utility method prepares Bluetooth adapter
+     */
     private boolean prepareAdapter(BluetoothAdapter adapter) {
         /* Prepare Bluetooth device */        
 	    mBluetoothAdapter = adapter;
@@ -227,6 +258,9 @@ public class BlueCharmActivity extends Activity {
 		return false;
     }
     
+    /**
+     * Bind ListView with Bluetooth device discovering
+     */
 	private void registerListForFoundedDevices() {
         // Create a BroadcastReceiver for ACTION_FOUND
         mReceiver = new BroadcastReceiver() {
@@ -245,6 +279,9 @@ public class BlueCharmActivity extends Activity {
 		registerReceiver(mReceiver, filter);   	
 	}
 	
+	/**
+	 * Custom ListView adapter
+	 */
 	private class SetListAdapter<T> extends ArrayAdapter<T> {
 		public SetListAdapter(Context context, int textViewResourceId, List<T> objects) {
 			super(context, textViewResourceId, objects);

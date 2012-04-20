@@ -26,7 +26,9 @@ public class BlueCharmService extends Service {
 	public static final int SERVER_PORT = 10;
 	public static final String DEVICES_STORAGE_NAME = "blueCharmDevices";
 	
-	/* Handles incoming Intents (Messages) */
+	/**
+	 * Handles incoming Intents (Messages)
+	 */
 	private class IncomingHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -53,12 +55,18 @@ public class BlueCharmService extends Service {
 	
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	
+	/**
+	 * Called when application binds to Service
+	 */
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.d(TAG, "Service binded");
 		return mMessenger.getBinder();
 	}
 	
+	/**
+	 * Save list of Bluetooth devices to local base
+	 */
 	private void saveDevices(ArrayList<String> list) {
 		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
 		SharedPreferences.Editor editor = devicesStorage.edit();
@@ -73,6 +81,9 @@ public class BlueCharmService extends Service {
 		Log.d(TAG, "Changes commited");
 	}
 	
+	/**
+	 * Notifies devices saved in the local base
+	 */
 	@SuppressWarnings("unchecked")
 	private void notifyDevices(String msg) {
 		SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
@@ -89,7 +100,9 @@ public class BlueCharmService extends Service {
 		}
 	}
 	
-	/* Notifies device specified by mac value */
+	/**
+	 * Notifies device specified by mac value
+	 */
 	private void notifyByMac(String mac, BluetoothAdapter adapter, String msg) {		
     	BluetoothDevice device = adapter.getRemoteDevice(mac);	
     	BluetoothSocket socket = null;
