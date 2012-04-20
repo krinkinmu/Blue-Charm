@@ -130,7 +130,7 @@ public class BlueCharmActivity extends Activity {
     	
     	Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
     	Bundle bundle = new Bundle();
-    	bundle.putString(null, "Test string");
+    	bundle.putString(null, mBluetoothAdapter.getName());
     	msg.setData(bundle);
     	try {
     		mService.send(msg);
