@@ -113,7 +113,7 @@ public class BlueCharmService extends Service {
 	    			OutputStream out = socket.getOutputStream();
 	    			Log.d(TAG, "Output stream created");
 	    			out.write(msg.getBytes());
-	    			Log.d(TAG, "Message sent");
+	    			Log.d(TAG, "Message sent: " + msg);
 	    			out.close();
 	    			Log.d(TAG, "Output stream closed");
 	    		} catch (IOException e) {

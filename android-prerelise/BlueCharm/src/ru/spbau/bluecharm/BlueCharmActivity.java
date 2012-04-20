@@ -55,6 +55,10 @@ public class BlueCharmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+    	/* Bind to BlueCharService */
+    	bindService(new Intent(this, BlueCharmService.class), mConnection,
+    			Context.BIND_AUTO_CREATE);
+        
         /* Bind View with Model */
         mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_checked, mData);
         mListView = (ListView) findViewById(R.id.blueDevices);
@@ -105,18 +109,7 @@ public class BlueCharmActivity extends Activity {
     	if (mReceiver != null) {
     		unregisterReceiver(mReceiver);
     	}
-    }
-    
-    @Override
-    protected void onStart() {
-    	super.onStart();
-    	/* Bind to BlueCharService */
-    	bindService(new Intent(this, BlueCharmService.class), mConnection,
-    			Context.BIND_AUTO_CREATE);
-    }
-    
-    protected void onStop() {
-    	super.onStop();
+    	
     	if (mBound) {
     		/* Unbind from BlueCharmService */
     		unbindService(mConnection);
@@ -124,6 +117,12 @@ public class BlueCharmActivity extends Activity {
     	}
     }
     
+    @Override
+    protected void onStart() {
+    	super.onStart();
+    }
+    
+  
     /* Test method initiates Bluetooth notification */
     private void notifyDevices() {
     	if (!mBound) return;
