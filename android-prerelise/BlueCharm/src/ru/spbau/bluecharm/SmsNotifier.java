@@ -1,5 +1,4 @@
 package ru.spbau.bluecharm;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +12,8 @@ import android.util.Log;
 
 public class SmsNotifier extends BroadcastReceiver { 
 	public static final String TAG = "SMS_NOTIFIER";
+	public static final String IN_SMS = "IN_SMS";
+	public static final char DELIMETER = 3;
 	public static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	
 	@Override
@@ -22,13 +23,20 @@ public class SmsNotifier extends BroadcastReceiver {
 			Bundle pudsBundle = intent.getExtras();
 			Object[] pdus = (Object[]) pudsBundle.get("pdus");
 			SmsMessage message = SmsMessage.createFromPdu((byte[]) pdus[0]);
-			String body = "Mesage: " + message.getDisplayMessageBody();
-			String orign = "From: " + message.getOriginatingAddress();
-			Log.d(TAG, body);
+			String body = message.getDisplayMessageBody();
+			String orign = message.getOriginatingAddress();
+			Log.d(TAG, "Message: " + body);
+			Log.d(TAG, "From: " + orign);
 			Intent service = new Intent(context, BlueCharmService.class);
 			IBinder binder = peekService(context, service);
 			if (binder != null) {
-				sendMessage(body + "\n" + orign , binder);
+				StringBuilder str = new StringBuilder();
+				str.append(IN_SMS);
+				str.append(DELIMETER);
+				str.append(orign);
+				str.append(DELIMETER);
+				str.append(body);
+				sendMessage(str.toString(), binder);
 			} else {
 				Log.d(TAG, "BlueCharmService isn't running");
 			}
