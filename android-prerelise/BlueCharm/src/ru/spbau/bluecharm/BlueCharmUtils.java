@@ -7,7 +7,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 public class BlueCharmUtils {
-    public static final String TAG = "UTILS";
+    public static final String TAG = "UTIL";
 
     public static String getContactName(Context context, String number) {
         Log.d(TAG, "Searching contact with number: " + number);

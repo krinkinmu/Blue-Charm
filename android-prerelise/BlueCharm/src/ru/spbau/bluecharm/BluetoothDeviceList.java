@@ -17,11 +17,11 @@ public class BluetoothDeviceList {
 
     private final ArrayList<BluetoothDeviceWrapper> mData = new ArrayList<BluetoothDeviceWrapper>();
 
-    private ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
+    private final ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
 
-    private ListView mListView;
+    private final ListView mListView;
 
-    private Activity mActivity;
+    private final Activity mActivity;
 
     public BluetoothDeviceList(Activity activity, ListView listView) {
         /* Bind View with Model */

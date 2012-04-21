@@ -16,12 +16,12 @@ public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
      */
-    private static final String TAG = "BLUE_CHARM_ACTIVITY";
+    public static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
      * Request constant for enabling BT
      */
-    private static final int REQUEST_ENABLE_BT = 1;
+    public static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter mBluetoothAdapter;
 

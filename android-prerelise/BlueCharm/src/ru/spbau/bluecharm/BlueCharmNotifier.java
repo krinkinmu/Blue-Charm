@@ -11,16 +11,14 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
 
     public static final String MAGIC = "BLUECHARM";
 
-    private static final char DELIMITER = 3;
-
     abstract protected String buildMessage(Context context, Intent intent);
 
     abstract protected String getType(Context context, Intent intent);
 
     abstract protected boolean isTargetIntent(Context context, Intent intent);
 
-    protected static char getDelimiter() {
-        return DELIMITER;
+    public static char getDelimiter() {
+        return 3;
     }
 
     @Override

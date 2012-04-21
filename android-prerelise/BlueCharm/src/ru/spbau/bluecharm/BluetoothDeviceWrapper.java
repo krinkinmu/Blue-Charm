@@ -6,9 +6,9 @@ import android.bluetooth.BluetoothDevice;
  * Immortal class... hmmm... it's magic... BlueCharm!
  */
 public class BluetoothDeviceWrapper {
-    private String mName;
+    private final String mName;
 
-    private String mAddress;
+    private final String mAddress;
 
     public BluetoothDeviceWrapper(BluetoothDevice device) {
         mName = device.getName();
