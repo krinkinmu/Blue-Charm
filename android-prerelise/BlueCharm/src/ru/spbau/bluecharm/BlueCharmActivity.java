@@ -16,12 +16,12 @@ public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
      */
-    public static final String TAG = "BLUE_CHARM_ACTIVITY";
+    private static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
      * Request constant for enabling BT
      */
-    public static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -35,7 +35,7 @@ public class BlueCharmActivity extends Activity {
 
     private BluetoothDeviceList mDeviceList;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
             mBound = true;
@@ -138,12 +138,12 @@ public class BlueCharmActivity extends Activity {
         switch (requestCode) {
             case REQUEST_ENABLE_BT:
                 if (resultCode != RESULT_OK) {
-                    Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
+                    Log.d(TAG, "Bluetooth didn't turn on: " + resultCode);
                     finish();
                 }
                 break;
             default:
-                Log.d("APPLICATION", "Unhandled request code: " + requestCode);
+                Log.d(TAG, "Unhandled request code: " + requestCode);
                 break;
         }
     }

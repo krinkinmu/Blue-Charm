@@ -7,11 +7,9 @@ import android.os.*;
 import android.util.Log;
 
 public abstract class BlueCharmNotifier extends BroadcastReceiver {
-    public static final String TAG = "CHARM_NOTIFIER";
+    private static final String TAG = "CHARM_NOTIFIER";
 
     public static final String MAGIC = "BLUECHARM";
-
-    public static final char DELIMITER = 3;
 
     abstract protected String buildMessage(Context context, Intent intent);
 
@@ -20,7 +18,7 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
     abstract protected boolean isTargetIntent(Context context, Intent intent);
 
     public static char getDelimiter() {
-        return DELIMITER;
+        return 3;
     }
 
     @Override
