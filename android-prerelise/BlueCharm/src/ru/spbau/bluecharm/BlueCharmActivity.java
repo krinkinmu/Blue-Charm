@@ -16,12 +16,12 @@ public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
      */
-    private static final String TAG = "BLUE_CHARM_ACTIVITY";
+    public static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
      * Request constant for enabling BT
      */
-    private static final int REQUEST_ENABLE_BT = 1;
+    public static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -35,7 +35,7 @@ public class BlueCharmActivity extends Activity {
 
     private BluetoothDeviceList mDeviceList;
 
-    private final ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
             mBound = true;
@@ -138,12 +138,12 @@ public class BlueCharmActivity extends Activity {
         switch (requestCode) {
             case REQUEST_ENABLE_BT:
                 if (resultCode != RESULT_OK) {
-                    Log.d(TAG, "Bluetooth didn't turn on: " + resultCode);
+                    Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
                     finish();
                 }
                 break;
             default:
-                Log.d(TAG, "Unhandled request code: " + requestCode);
+                Log.d("APPLICATION", "Unhandled request code: " + requestCode);
                 break;
         }
     }
@@ -177,10 +177,9 @@ public class BlueCharmActivity extends Activity {
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();
-        bundle.putString(null, SmsNotifier.MAGIC + SmsNotifier.getDelimiter()
-                + SmsNotifier.TYPE + SmsNotifier.getDelimiter()
-                + mBluetoothAdapter.getName() + SmsNotifier.getDelimiter()
-                + getResources().getString(R.string.test_message));
+        char sep = BlueCharmNotifier.getDelimiter();
+        bundle.putString(null, BlueCharmNotifier.MAGIC + sep + SmsNotifier.TYPE + sep
+            + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);

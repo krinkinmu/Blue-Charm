@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class BlueCharmService extends Service {
-    private static final String TAG = "BLUE_CHARM_SERVICE";
+    public static final String TAG = "BLUE_CHARM_SERVICE";
 
     public static final int MSG_NOTIFY_LISTENERS = 1;
 
@@ -35,15 +35,18 @@ public class BlueCharmService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_NOTIFY_LISTENERS:
-                    Log.d(TAG, "MSG_NOTIFY_LISTENERS received");
+                    Log.d(TAG, "MSG_NOTIFY_LISTENERS recieved");
                     String line = msg.getData().getString(null);
                     notifyDevices(line);
                     break;
                 case MSG_SET_LISTENERS:
-                    Log.d(TAG, "MSG_SET_LISTENERS received");
+                    Log.d(TAG, "MSG_SET_LISTENERS recieved");
                     ArrayList<String> list = msg.getData().getStringArrayList(null);
                     Log.d(TAG, "Number of listeners: " + list.size());
                     saveDevices(list);
+                    break;
+                case MSG_GET_LISTENERS:
+                    Log.d(TAG, "MSG_GET_LISTENERS recieved");
                     break;
                 default:
                     super.handleMessage(msg);
@@ -76,7 +79,7 @@ public class BlueCharmService extends Service {
             Log.d(TAG, wrapper.toDataString());
         }
         editor.commit();
-        Log.d(TAG, "Changes committed");
+        Log.d(TAG, "Changes commited");
     }
 
     /**
@@ -84,12 +87,12 @@ public class BlueCharmService extends Service {
      */
     @SuppressWarnings("unchecked")
     private void notifyDevices(String msg) {
-        SharedPreferences devicesStorage = getSharedPreferences(BluetoothDeviceList.DEVICES_STORAGE_NAME, 0);
+        SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
         Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (!adapter.isEnabled()) {
-            Log.e(TAG, "Bluetooth adapter isn't accessible");
+            Log.d(TAG, "Bluetooth adapter isn't accessiable");
             return;
         }
 
@@ -112,7 +115,7 @@ public class BlueCharmService extends Service {
              * @see: https://github.com/krinkinmu/Blue-Charm/wiki/Socket-opening-on-HTC-devices
              */
             Method m = device.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
-            socket = (BluetoothSocket) m.invoke(device, SERVER_CHANNEL);
+            socket = (BluetoothSocket) m.invoke(device, SERVER_PORT);
             Log.d(TAG, "Socket created");
         } catch (Exception e) {
             Log.e(TAG, e.getLocalizedMessage());
@@ -127,14 +130,16 @@ public class BlueCharmService extends Service {
                 Log.d(TAG, "Socket connected");
                 try {
                     OutputStream out = socket.getOutputStream();
+                    Log.d(TAG, "Output stream created");
                     out.write(msg.getBytes());
                     Log.d(TAG, "Message sent: " + msg);
                     out.close();
+                    Log.d(TAG, "Output stream closed");
                 } catch (IOException e) {
                     Log.e(TAG, e.getLocalizedMessage());
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Failed to connect to " + mac);
+                Log.d(TAG, "Failed to connect to " + mac);
                 Log.e(TAG, e.getLocalizedMessage());
             } finally {
                 try {

@@ -36,8 +36,8 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
             Log.e(TAG, "BlueCharmService isn't running");
         }
     }
-
-    private void sendMessage(String msg, IBinder binder) {
+    
+    private static void sendMessage(String msg, IBinder binder) {
         Messenger messenger = new Messenger(binder);
         Message message = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();

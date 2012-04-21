@@ -47,19 +47,12 @@ public class BluetoothDeviceWrapper {
         if (this == other) {
             return true;
         }
-
-        boolean result = false;
-
+        
         if (other instanceof BluetoothDeviceWrapper) {
             BluetoothDeviceWrapper that = (BluetoothDeviceWrapper) other;
-            result = that.canEqual(this) && (getAddress().equals(that.getAddress()));
+            return getAddress().equals(that.getAddress());
         }
 
-        return result;
-
-    }
-
-    boolean canEqual(Object other) {
-        return (other instanceof BluetoothDeviceWrapper);
+        return false;
     }
 }
