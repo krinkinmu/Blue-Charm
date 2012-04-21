@@ -20,13 +20,12 @@ class Server(threading.Thread):
 		self.tray = tray
 	
 
-	def parseSms(self, data ) :
-		return "Sender: " +  data[3] \
-	            + "\n Phone: " +  data[2] + " number of messages: \n" +\
-        	    "\n"
+	def parseSms(self, data) :
+		return "SMS from Sender: " +  data[2] \
+	            + "\n Text: " +  data[3]
 
-	def parseCall(self, data ) :
-	     return " Phone: " +  data[2] + "\n is calling \n"
+	def parseCall(self, data) :
+	     return "Call from: " +  data[2]
     
                                                         
 	def info (self, data )  :
