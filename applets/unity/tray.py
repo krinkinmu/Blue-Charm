@@ -10,8 +10,8 @@ import appindicator
 
 class Tray(threading.Thread):
 
-	noCallsImageFile = "/home/sergey/softpract/Blue-Charm/rc/no_calls.png"
-	missedCallsImageFile = "/home/sergey/softpract/Blue-Charm/rc/missed_call.png"
+	noCallsImageFile = "/home/sergey/softpract/Blue-Charm/applets/rc/no_calls.png"
+	missedCallsImageFile = "/home/sergey/softpract/Blue-Charm/applets/rc/missed_call.png"
 
 	def __init__(self, counter):
 		threading.Thread.__init__(self)
@@ -65,7 +65,6 @@ class Tray(threading.Thread):
 		self.tray.set_status(appindicator.STATUS_ACTIVE)
 		self.tray.set_icon(self.noCallsImageFile)
 		self.tray.set_attention_icon(self.missedCallsImageFile)
-#		self.tray.set_icon("indicator-messages-new")
 
 	        gtk.threads_enter()
         	gtk.main()
