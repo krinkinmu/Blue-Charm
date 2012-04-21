@@ -8,6 +8,10 @@ import counter
 
 
 class Tray(threading.Thread):
+
+	noCallsImageFile = "../rc/no_calls.png"
+	missedCallsImageFile = "../rc/missed_call.png"	
+
 	def __init__(self, counter):
 		threading.Thread.__init__(self)
 		self.counter = counter
@@ -18,10 +22,10 @@ class Tray(threading.Thread):
 
 	def dropCounter(self):
 		self.counter.null()
-		self.changeImage("../rc/no_calls.png")
+		self.changeImage(self.noCallsImageFile)
 
 	def setMessageRecievedImage(self):
-		self.changeImage("../rc/missed_call.png");
+		self.changeImage(self.missedCallsImageFile);
 	
 	def openMenu(self):
 		menu = gtk.Menu()
@@ -45,7 +49,7 @@ class Tray(threading.Thread):
 	def run(self):
  		self.tray = gtk.StatusIcon()
 		self.tray.connect('button-press-event', self.tray_icon_callback)
-		self.changeImage("../rc/no_calls.png")
+		self.changeImage(self.noCallsImageFile)
 
 	        gtk.threads_enter()
         	gtk.main()
