@@ -17,6 +17,7 @@ class Tray(threading.Thread):
 		path = "/home/sergey/softpract/Blue-Charm/applets/rc/"
 		self.noCallsImageFile = path + "no_calls.png"
 		self.missedCallsImageFile = path + "missed_call.png"
+		quitImageFile = path + "exit.png"
 		print self.noCallsImageFile
 		print self.missedCallsImageFile
 
@@ -24,6 +25,21 @@ class Tray(threading.Thread):
 		self.tray = gtk.StatusIcon()
 		self.tray.connect('button-press-event', self.tray_icon_callback)
 		self.changeImage(self.noCallsImageFile)
+
+		
+		quitImage = gtk.Image()
+		quitImage.set_from_file(quitImageFile)
+		quitImage.show()
+
+		self.menu = gtk.Menu()
+		quit = gtk.ImageMenuItem("exit")
+		quit.set_image(quitImage)
+		quit.set_always_show_image(True)
+		quit.connect('activate', gtk.main_quit)
+		quit.show()
+
+		self.menu.append(quit)
+
 
         
 	def changeImage(self, string):
@@ -38,13 +54,7 @@ class Tray(threading.Thread):
 		self.changeImage(self.missedCallsImageFile);
 	
 	def openMenu(self):
-		menu = gtk.Menu()
-		quit = gtk.MenuItem("exit")
-		quit.connect('activate', gtk.main_quit)
-		quit.show()
-
-		menu.append(quit)
-		menu.popup(None, None, None, 0, 0)
+		self.menu.popup(None, None, None, 0, 0)
 
 
 	def tray_icon_callback(self, widget, event):
