@@ -3,34 +3,29 @@
 import gtk
 import sys
 import pygtk
-import egg.trayicon
 import threading
 import counter
 
 
 class Tray(threading.Thread):
 
-	
+	noCallsImageFile = "../rc/no_calls.png"
+	missedCallsImageFile = "../rc/missed_call.png"	
 
 	def __init__(self, counter):
 		threading.Thread.__init__(self)
 		self.counter = counter
-
+        
 	def changeImage(self, string):
-		self.tray.remove(self.box)
-		self.box.remove(self.label)
-		self.label = gtk.Label(string)
-		self.box.add(self.label)
-		self.tray.add(self.box)
-		self.tray.show_all()
+		self.tray.set_from_file(string)
 
 
 	def dropCounter(self):
 		self.counter.null()
-		self.changeImage("BlueCharm")
+		self.changeImage(self.noCallsImageFile)
 
 	def setMessageRecievedImage(self):
-		self.changeImage("AAAAAAAA");
+		self.changeImage(self.missedCallsImageFile);
 	
 	def openMenu(self):
 		menu = gtk.Menu()
@@ -52,15 +47,11 @@ class Tray(threading.Thread):
 	
 
 	def run(self):
-		self.tray = egg.trayicon.TrayIcon("Tray")
-		self.box = gtk.EventBox()
-		self.label = gtk.Label("BlueCharm")
-		self.box.add(self.label)
-		self.tray.add(self.box)
-		self.box.connect('button-press-event', self.tray_icon_callback)
-		self.tray.show_all()
+ 		self.tray = gtk.StatusIcon()
+		self.tray.connect('button-press-event', self.tray_icon_callback)
+		self.changeImage(self.noCallsImageFile)
 
-		gtk.threads_enter()
-		gtk.main()
-		gtk.threads_leave()
+	        gtk.threads_enter()
+        	gtk.main()
+	        gtk.threads_leave()
 
