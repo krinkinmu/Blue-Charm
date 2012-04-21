@@ -31,9 +31,9 @@ import android.widget.ProgressBar;
 
 public class BlueCharmActivity extends Activity
 {
-	/**
-	 * Debugging tag symbol
-	 */
+    /**
+     * Debugging tag symbol
+     */
     public static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
