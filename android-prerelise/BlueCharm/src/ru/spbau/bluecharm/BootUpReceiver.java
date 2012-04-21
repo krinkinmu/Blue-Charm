@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+/**
+ * Broadcast Receiver for starting service at boot time.
+ */
 public class BootUpReceiver extends BroadcastReceiver {
     private static final String TAG = "BOOTUP_RECEIVER";
 

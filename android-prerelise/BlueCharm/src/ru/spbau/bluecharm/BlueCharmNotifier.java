@@ -40,7 +40,7 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
      *
      * @param context Context
      * @param intent  Intent
-     * @return True if we want to send some message.
+     * @return True if we want to send message.
      */
     abstract protected boolean isTargetIntent(Context context, Intent intent);
 
