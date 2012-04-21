@@ -217,7 +217,8 @@ public class BlueCharmActivity extends Activity
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();
-        bundle.putString(null, mBluetoothAdapter.getName());
+        bundle.putString(null, "BLUECHARM" + '\3' + "IN_SMS" + '\3' 
+        		+ mBluetoothAdapter.getName() + '\3' + "Test message");
         msg.setData(bundle);
         try {
             mService.send(msg);
