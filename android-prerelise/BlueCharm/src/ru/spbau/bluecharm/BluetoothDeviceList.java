@@ -3,14 +3,13 @@ package ru.spbau.bluecharm;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.SparseBooleanArray;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DeviceList {
+public class BluetoothDeviceList {
     /**
      * Bluetooth devices storage name
      */
@@ -24,11 +23,11 @@ public class DeviceList {
 
     private Activity mActivity;
 
-    public DeviceList(Activity activity) {
-         /* Bind View with Model */
+    public BluetoothDeviceList(Activity activity, ListView listView) {
+        /* Bind View with Model */
         mArrayAdapter = new SetListAdapter<BluetoothDeviceWrapper>(activity,
                 android.R.layout.simple_list_item_checked, mData);
-        mListView = (ListView) activity.findViewById(R.id.blueDevices);
+        mListView = listView;
         mListView.setAdapter(mArrayAdapter);
         mActivity = activity;
     }
