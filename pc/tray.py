@@ -5,12 +5,13 @@ import sys
 import pygtk
 import threading
 import counter
+import appindicator
 
 
 class Tray(threading.Thread):
 
-	noCallsImageFile = "../rc/no_calls.png"
-	missedCallsImageFile = "../rc/missed_call.png"	
+	noCallsImageFile = "/home/sergey/softpract/Blue-Charm/rc/no_calls.png"
+	missedCallsImageFile = "/home/sergey/softpract/Blue-Charm/rc/missed_call.png"
 
 	def __init__(self, counter):
 		threading.Thread.__init__(self)
@@ -22,10 +23,10 @@ class Tray(threading.Thread):
 
 	def dropCounter(self):
 		self.counter.null()
-		self.changeImage(self.noCallsImageFile)
+		self.tray.set_status(appindicator.STATUS_ACTIVE)
 
 	def setMessageRecievedImage(self):
-		self.changeImage(self.missedCallsImageFile);
+		self.tray.set_status(appindicator.STATUS_ATTENTION)
 	
 	def openMenu(self):
 		menu = gtk.Menu()
@@ -47,9 +48,24 @@ class Tray(threading.Thread):
 	
 
 	def run(self):
- 		self.tray = gtk.StatusIcon()
-		self.tray.connect('button-press-event', self.tray_icon_callback)
-		self.changeImage(self.noCallsImageFile)
+		self.tray = appindicator.Indicator("bluecharm", "indicator", appindicator.CATEGORY_APPLICATION_STATUS)
+		menu = gtk.Menu()
+
+		readMenuItem = gtk.MenuItem("Read")
+		readMenuItem.connect('activate', self.dropCounter)
+		readMenuItem.show()
+		menu.append(readMenuItem)
+
+		quitMenuItem = gtk.MenuItem("Quit")
+		quitMenuItem.connect('activate', gtk.main_quit)
+		quitMenuItem.show()
+		menu.append(quitMenuItem)
+
+		self.tray.set_menu(menu)
+		self.tray.set_status(appindicator.STATUS_ACTIVE)
+		self.tray.set_icon(self.noCallsImageFile)
+		self.tray.set_attention_icon(self.missedCallsImageFile)
+#		self.tray.set_icon("indicator-messages-new")
 
 	        gtk.threads_enter()
         	gtk.main()
