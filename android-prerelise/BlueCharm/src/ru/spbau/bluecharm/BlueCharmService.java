@@ -19,10 +19,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class BlueCharmService extends Service {
-    public static final String TAG = "BLUE_CHARM_SERVICE";
+    private static final String TAG = "BLUE_CHARM_SERVICE";
 
+    /**
+     * Notify message type
+     */
     public static final int MSG_NOTIFY_LISTENERS = 1;
 
+    /**
+     * Save devices message type
+     */
     public static final int MSG_SET_LISTENERS = 2;
 
     private static final int SERVER_CHANNEL = 10;
@@ -55,6 +61,9 @@ public class BlueCharmService extends Service {
 
     /**
      * Called when application binds to Service
+     *
+     * @param intent Intent
+     * @return Binder to send messages to service.
      */
     @Override
     public IBinder onBind(Intent intent) {
@@ -63,7 +72,9 @@ public class BlueCharmService extends Service {
     }
 
     /**
-     * Save list of Bluetooth devices to local base
+     * Save list of Bluetooth devices to local data base
+     *
+     * @param list List of devices(string representation)
      */
     private void saveDevices(ArrayList<String> list) {
         SharedPreferences devicesStorage = getSharedPreferences(BluetoothDeviceList.DEVICES_STORAGE_NAME, 0);
@@ -81,6 +92,8 @@ public class BlueCharmService extends Service {
 
     /**
      * Notifies devices saved in the local base
+     *
+     * @param msg Message to send.
      */
     @SuppressWarnings("unchecked")
     private void notifyDevices(String msg) {
@@ -99,7 +112,11 @@ public class BlueCharmService extends Service {
     }
 
     /**
-     * Notifies device specified by mac value
+     * Sends message to device specified by mac address
+     *
+     * @param mac     MAC address of bluetooth device
+     * @param adapter Bluetooth adapter
+     * @param msg     Message
      */
     private void notifyByMac(String mac, BluetoothAdapter adapter, String msg) {
         BluetoothDevice device = adapter.getRemoteDevice(mac);
