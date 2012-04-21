@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import bluetooth
+import exceptions
 from datetime import datetime
 
 server_sock=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
