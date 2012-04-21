@@ -5,54 +5,45 @@ import android.bluetooth.BluetoothDevice;
 /**
  * Immortal class... hmmm... it's magic... BlueCharm!
  */
-public class BluetoothDeviceWrapper
-{
+public class BluetoothDeviceWrapper {
     private String mName;
 
     private String mAddress;
 
-    public BluetoothDeviceWrapper(BluetoothDevice device)
-    {
+    public BluetoothDeviceWrapper(BluetoothDevice device) {
         mName = device.getName();
         mAddress = device.getAddress();
     }
 
-    public BluetoothDeviceWrapper(String string)
-    {
+    public BluetoothDeviceWrapper(String string) {
         String[] contents = string.split("\n");
         mName = contents[0];
         mAddress = contents[1];
     }
 
-    public BluetoothDeviceWrapper(String name, String address)
-    {
+    public BluetoothDeviceWrapper(String name, String address) {
         mName = name;
         mAddress = address;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return mName;
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return mAddress;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return mName;
     }
 
-    public String toDataString()
-    {
+    public String toDataString() {
         return mName + "\n" + mAddress;
     }
 
     @Override
-    public boolean equals(Object other)
-    {
+    public boolean equals(Object other) {
         if (this == other) {
             return true;
         }
@@ -68,8 +59,7 @@ public class BluetoothDeviceWrapper
 
     }
 
-    boolean canEqual(Object other)
-    {
+    boolean canEqual(Object other) {
         return (other instanceof BluetoothDeviceWrapper);
     }
 }
