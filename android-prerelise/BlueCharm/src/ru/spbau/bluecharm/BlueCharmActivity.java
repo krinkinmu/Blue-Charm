@@ -6,16 +6,10 @@ import android.bluetooth.BluetoothDevice;
 import android.content.*;
 import android.os.*;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 public class BlueCharmActivity extends Activity {
     /**
@@ -24,16 +18,10 @@ public class BlueCharmActivity extends Activity {
     public static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
-     * Bluetooth devices storage name
+     * Request constant for enabling BT
      */
-    public static final String DEVICES_STORAGE_NAME = "blueCharmDevices";
-
-    private final ArrayList<BluetoothDeviceWrapper> mData = new ArrayList<BluetoothDeviceWrapper>();
-
-    private ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
-
-    private ListView mListView;
-
+    public static final int REQUEST_ENABLE_BT = 1;
+    
     private BluetoothAdapter mBluetoothAdapter;
 
     private BroadcastReceiver mReceiver;
@@ -43,6 +31,8 @@ public class BlueCharmActivity extends Activity {
     private Messenger mService;
 
     private BroadcastReceiver mDeviceDiscoveryReceiver;
+
+    private DeviceList mDeviceList;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -69,27 +59,17 @@ public class BlueCharmActivity extends Activity {
         final Intent service = new Intent(this, BlueCharmService.class);
         startService(service);
 
-        /* Bind View with Model */
-        mArrayAdapter =
-                new SetListAdapter<BluetoothDeviceWrapper>(this, android.R.layout.simple_list_item_checked, mData);
-        mListView = (ListView) findViewById(R.id.blueDevices);
-        mListView.setAdapter(mArrayAdapter);
+        mDeviceList = new DeviceList(this);
 
+        registerProgressBar();
+        
         /**
          * Preparing device and filling choice list
          */
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        BluetoothAdapterUtils.prepare(this, mBluetoothAdapter);
-
-        findViewById(R.id.progress).setVisibility(View.INVISIBLE);
-
-        if (mBluetoothAdapter.isEnabled()) {
+        if (prepareAdapter(BluetoothAdapter.getDefaultAdapter())) {
             registerListForFoundedDevices();
-            renewChoices();
+            mDeviceList.renewChoices();
             mBluetoothAdapter.startDiscovery();
-            registerProgressBar();
-        } else {
-            // TODO: if bluetooth enabling declined
         }
 
         /* Set UI event listeners */
@@ -98,7 +78,7 @@ public class BlueCharmActivity extends Activity {
                 Log.d(TAG, "onClick (refresh button)");
                 if (mBluetoothAdapter.isEnabled()) {
                     mBluetoothAdapter.cancelDiscovery();
-                    refreshListView();
+                    mDeviceList.refreshListView();
                     mBluetoothAdapter.startDiscovery();
                 }
             }
@@ -120,35 +100,11 @@ public class BlueCharmActivity extends Activity {
         });
 
         /* Save device user chosen */
-        mListView.setOnItemClickListener(new OnItemClickListener() {
+        mDeviceList.getListView().setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
                 saveDevices();
             }
         });
-    }
-
-    /**
-     * Initiate Bluetooth device discovering
-     */
-    private void refreshListView() {
-        mArrayAdapter.clear();
-        renewChoices();
-        findViewById(R.id.progress).setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Update user chosen devices in ListView
-     */
-    private void renewChoices() {
-        mListView.clearChoices();
-        SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
-        @SuppressWarnings("unchecked")
-        Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
-        int i = 0;
-        for (Map.Entry<String, String> device : devices.entrySet()) {
-            mArrayAdapter.add(new BluetoothDeviceWrapper(device.getValue(), device.getKey()));
-            mListView.setItemChecked(i++, true);
-        }
     }
 
     /**
@@ -174,6 +130,21 @@ public class BlueCharmActivity extends Activity {
             mBound = false;
         }
     }
+    
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case REQUEST_ENABLE_BT:
+			if (resultCode != RESULT_OK) {
+				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
+				finish();
+			}
+			break;			
+		default:
+			Log.d("APPLICATION", "Unhandled request code: " + requestCode);		
+			break;
+		}
+	}
 
     /**
      * Called when Activity closed
@@ -181,6 +152,9 @@ public class BlueCharmActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        
+        mBluetoothAdapter.cancelDiscovery();
+        
         /* Free broadcast receiver */
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
@@ -221,16 +195,9 @@ public class BlueCharmActivity extends Activity {
         }
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_SET_LISTENERS, 0, 0);
-        ArrayList<String> devices = new ArrayList<String>();
-        SparseBooleanArray checked = mListView.getCheckedItemPositions();
-        for (int i = 0; i < mData.size(); ++i) {
-            if (checked.get(i)) {
-                devices.add(mData.get(i).toDataString());
-            }
-        }
 
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList(null, devices);
+        bundle.putStringArrayList(null, mDeviceList.getDevices());
         msg.setData(bundle);
         try {
             mService.send(msg);
@@ -246,12 +213,20 @@ public class BlueCharmActivity extends Activity {
         mDeviceDiscoveryReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                findViewById(R.id.progress).setVisibility(View.INVISIBLE);
+            	if (intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
+            		findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            		findViewById(R.id.refresh_button).setEnabled(false);
+            	} else {
+            		findViewById(R.id.progress).setVisibility(View.INVISIBLE);
+            		findViewById(R.id.refresh_button).setEnabled(true);
+            	}
             }
         };
 
-        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(mDeviceDiscoveryReceiver, filter);
+        IntentFilter filterStart = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        IntentFilter filterFinish = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mDeviceDiscoveryReceiver, filterStart);
+        registerReceiver(mDeviceDiscoveryReceiver, filterFinish);
     }
 
     /**
@@ -267,11 +242,28 @@ public class BlueCharmActivity extends Activity {
                     // Get the BluetoothDevice object from the Intent
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     // Add the name and address to an array adapter to show in a ListView
-                    mArrayAdapter.add(new BluetoothDeviceWrapper(device));
+                    mDeviceList.add(new BluetoothDeviceWrapper(device));
                 }
             }
         };
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
+    }
+    
+    /**
+     * Utility method prepares Bluetooth adapter
+     */
+    private boolean prepareAdapter(BluetoothAdapter adapter)
+    {
+        /* Prepare Bluetooth device */
+        mBluetoothAdapter = adapter;
+        if (mBluetoothAdapter != null) {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            return true;
+        }
+        return false;
     }
 }

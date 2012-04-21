@@ -6,14 +6,16 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-public class BlueCharmUtils {
+public class BlueCharmUtils
+{
     public static final String TAG = "UTIL";
 
-    public static String getContactName(Context context, String number) {
+    public static String getContactName(Context context, String number)
+    {
         Log.d(TAG, "Searching contact with number: " + number);
 
         // define the columns I want the query to return
-        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+        String[] projection = new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME};
 
         // encode the phone number and build the filter URI
         Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
