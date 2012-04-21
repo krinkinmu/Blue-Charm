@@ -11,12 +11,7 @@ server_sock.listen(0)
 
 while True:
     client_sock,address = server_sock.accept()
-    data = ""
-    while True:
-       try:
-           data += client_sock.recv(1024)
-       except:
-           break;
+    data = client_sock.recv(1024)
     print datetime.now(), "-", data
     client_sock.close()
 
