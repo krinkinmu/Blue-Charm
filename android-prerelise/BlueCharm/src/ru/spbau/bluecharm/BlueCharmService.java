@@ -1,11 +1,5 @@
 package ru.spbau.bluecharm;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Map;
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,8 +12,13 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
-public class BlueCharmService extends Service
-{
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Map;
+
+public class BlueCharmService extends Service {
     public static final String TAG = "BLUE_CHARM_SERVICE";
 
     public static final int MSG_NOTIFY_LISTENERS = 1;
@@ -35,11 +34,9 @@ public class BlueCharmService extends Service
     /**
      * Handles incoming Intents (Messages)
      */
-    private class IncomingHandler extends Handler
-    {
+    private class IncomingHandler extends Handler {
         @Override
-        public void handleMessage(Message msg)
-        {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_NOTIFY_LISTENERS:
                     Log.d(TAG, "MSG_NOTIFY_LISTENERS recieved");
@@ -67,8 +64,7 @@ public class BlueCharmService extends Service
      * Called when application binds to Service
      */
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         Log.d(TAG, "Service binded");
         return mMessenger.getBinder();
     }
@@ -76,8 +72,7 @@ public class BlueCharmService extends Service
     /**
      * Save list of Bluetooth devices to local base
      */
-    private void saveDevices(ArrayList<String> list)
-    {
+    private void saveDevices(ArrayList<String> list) {
         SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
         SharedPreferences.Editor editor = devicesStorage.edit();
         editor.clear();
@@ -95,8 +90,7 @@ public class BlueCharmService extends Service
      * Notifies devices saved in the local base
      */
     @SuppressWarnings("unchecked")
-    private void notifyDevices(String msg)
-    {
+    private void notifyDevices(String msg) {
         SharedPreferences devicesStorage = getSharedPreferences(DEVICES_STORAGE_NAME, 0);
         Map<String, String> devices = (Map<String, String>) devicesStorage.getAll();
 
@@ -114,14 +108,13 @@ public class BlueCharmService extends Service
     /**
      * Notifies device specified by mac value
      */
-    private void notifyByMac(String mac, BluetoothAdapter adapter, String msg)
-    {
+    private void notifyByMac(String mac, BluetoothAdapter adapter, String msg) {
         BluetoothDevice device = adapter.getRemoteDevice(mac);
         BluetoothSocket socket = null;
         Log.d(TAG, "Notify: " + mac);
 
         try {
-            Method m = device.getClass().getMethod("createRfcommSocket", new Class[] {int.class});
+            Method m = device.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
             socket = (BluetoothSocket) m.invoke(device, SERVER_PORT);
             Log.d(TAG, "Socket created");
         } catch (Exception e) {
