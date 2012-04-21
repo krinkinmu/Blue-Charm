@@ -35,12 +35,12 @@ public class BlueCharmService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_NOTIFY_LISTENERS:
-                    Log.d(TAG, "MSG_NOTIFY_LISTENERS recieved");
+                    Log.d(TAG, "MSG_NOTIFY_LISTENERS received");
                     String line = msg.getData().getString(null);
                     notifyDevices(line);
                     break;
                 case MSG_SET_LISTENERS:
-                    Log.d(TAG, "MSG_SET_LISTENERS recieved");
+                    Log.d(TAG, "MSG_SET_LISTENERS received");
                     ArrayList<String> list = msg.getData().getStringArrayList(null);
                     Log.d(TAG, "Number of listeners: " + list.size());
                     saveDevices(list);
@@ -76,7 +76,7 @@ public class BlueCharmService extends Service {
             Log.d(TAG, wrapper.toDataString());
         }
         editor.commit();
-        Log.d(TAG, "Changes commited");
+        Log.d(TAG, "Changes committed");
     }
 
     /**
@@ -89,7 +89,7 @@ public class BlueCharmService extends Service {
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (!adapter.isEnabled()) {
-            Log.d(TAG, "Bluetooth adapter isn't accessiable");
+            Log.e(TAG, "Bluetooth adapter isn't accessiable");
             return;
         }
 
@@ -127,16 +127,14 @@ public class BlueCharmService extends Service {
                 Log.d(TAG, "Socket connected");
                 try {
                     OutputStream out = socket.getOutputStream();
-                    Log.d(TAG, "Output stream created");
                     out.write(msg.getBytes());
                     Log.d(TAG, "Message sent: " + msg);
                     out.close();
-                    Log.d(TAG, "Output stream closed");
                 } catch (IOException e) {
                     Log.e(TAG, e.getLocalizedMessage());
                 }
             } catch (IOException e) {
-                Log.d(TAG, "Failed to connect to " + mac);
+                Log.e(TAG, "Failed to connect to " + mac);
                 Log.e(TAG, e.getLocalizedMessage());
             } finally {
                 try {
