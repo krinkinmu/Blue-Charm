@@ -3,7 +3,6 @@
 import gtk
 import sys
 import pygtk
-import egg.trayicon
 import threading
 import counter
 
