@@ -16,12 +16,12 @@ public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
      */
-    public static final String TAG = "BLUE_CHARM_ACTIVITY";
+    private static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
      * Request constant for enabling BT
      */
-    public static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -177,10 +177,9 @@ public class BlueCharmActivity extends Activity {
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();
-        bundle.putString(null, SmsNotifier.MAGIC + SmsNotifier.getDelimiter()
-                + SmsNotifier.TYPE + SmsNotifier.getDelimiter()
-                + mBluetoothAdapter.getName() + SmsNotifier.getDelimiter()
-                + getResources().getString(R.string.test_message));
+        char sep = BlueCharmNotifier.getDelimiter();
+        bundle.putString(null, BlueCharmNotifier.MAGIC + sep + SmsNotifier.TYPE + sep
+            + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class BlueCharmService extends Service {
-    public static final String TAG = "BLUE_CHARM_SERVICE";
+    private static final String TAG = "BLUE_CHARM_SERVICE";
 
     public static final int MSG_NOTIFY_LISTENERS = 1;
 
