@@ -18,15 +18,13 @@ class Tray(threading.Thread):
 		self.noCallsImageFile = path + "no_calls.png"
 		self.missedCallsImageFile = path + "missed_call.png"
 		quitImageFile = path + "exit.png"
-		print self.noCallsImageFile
-		print self.missedCallsImageFile
-
 		
 		self.tray = gtk.StatusIcon()
 		self.tray.connect('button-press-event', self.tray_icon_callback)
 		self.changeImage(self.noCallsImageFile)
-
-		
+	
+	
+			
 		quitImage = gtk.Image()
 		quitImage.set_from_file(quitImageFile)
 		quitImage.show()
