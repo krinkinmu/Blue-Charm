@@ -24,7 +24,7 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver
 
     abstract protected boolean isTargetIntent(Context context, Intent intent);
 
-    public char getDelimiter()
+    public static char getDelimiter()
     {
         return DELIMITER;
     }

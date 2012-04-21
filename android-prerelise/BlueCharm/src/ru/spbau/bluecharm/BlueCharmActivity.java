@@ -31,10 +31,19 @@ import android.widget.ProgressBar;
 
 public class BlueCharmActivity extends Activity
 {
+	/**
+	 * Debugging tag symbol
+	 */
     public static final String TAG = "BLUE_CHARM_ACTIVITY";
 
+    /**
+     * Request constant for enabling BT
+     */
     public static final int REQUEST_ENABLE_BT = 1;
 
+    /**
+     * Bluetooth devices storage name
+     */
     public static final String DEVICES_STORAGE_NAME = "blueCharmDevices";
 
     private final ArrayList<BluetoothDeviceWrapper> mData = new ArrayList<BluetoothDeviceWrapper>();
@@ -78,6 +87,7 @@ public class BlueCharmActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        /* Starting service */
         final Intent service = new Intent(this, BlueCharmService.class);
         startService(service);
 
@@ -87,6 +97,9 @@ public class BlueCharmActivity extends Activity
         mListView = (ListView) findViewById(R.id.blueDevices);
         mListView.setAdapter(mArrayAdapter);
 
+        /**
+         * Preparing device and filling choice list
+         */
         if (prepareAdapter(BluetoothAdapter.getDefaultAdapter())) {
             registerListForFoundedDevices();
             renewChoices();
@@ -217,8 +230,10 @@ public class BlueCharmActivity extends Activity
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();
-        bundle.putString(null, "BLUECHARM" + '\3' + "IN_SMS" + '\3' 
-        		+ mBluetoothAdapter.getName() + '\3' + "Test message");
+        bundle.putString(null, SmsNotifier.MAGIC + SmsNotifier.getDelimiter() 
+        		+ SmsNotifier.TYPE + SmsNotifier.getDelimiter() 
+        		+ mBluetoothAdapter.getName() + SmsNotifier.getDelimiter()  
+        		+ getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);
