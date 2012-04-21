@@ -19,4 +19,3 @@ server = server.Server(counter, tray)
 server.setDaemon(True)
 server.start()
 
-

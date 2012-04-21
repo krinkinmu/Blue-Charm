@@ -34,15 +34,15 @@ class Server(threading.Thread):
 		print data_splitted
 		if ( data_splitted[0] == self.magic ) :
 			typeM = data_splitted[1]
-		self.counter.acquire()
-		self.counter.inc()
-		self.counter.release()
-		self.tray.setMessageRecievedImage()
-		if ( typeM == self.sms ) :
-			return "SMS", self.parseSms( data_splitted )   
+			self.counter.acquire()
+			self.counter.inc()
+			self.counter.release()
+			self.tray.setMessageRecievedImage()
+			if ( typeM == self.sms ) :
+				return "SMS", self.parseSms( data_splitted )   
     
-		elif ( typeM == self.call ) :
-			return "Call", self.parseCall( data_splitted ) 
+			elif ( typeM == self.call ) :
+				return "Call", self.parseCall( data_splitted ) 
 
 		else :
 			return None, None
