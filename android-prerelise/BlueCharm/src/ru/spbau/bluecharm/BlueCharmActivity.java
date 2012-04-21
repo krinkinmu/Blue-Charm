@@ -34,7 +34,7 @@ public class BlueCharmActivity extends Activity {
 
     private ListView mListView;
 
-    private BluetoothAdapterWrapper bluetoothAdapterWrapper;
+    private BluetoothAdapter mBluetoothAdapter;
 
     private BroadcastReceiver mReceiver;
 
@@ -78,15 +78,15 @@ public class BlueCharmActivity extends Activity {
         /**
          * Preparing device and filling choice list
          */
-        bluetoothAdapterWrapper = new BluetoothAdapterWrapper();
-        bluetoothAdapterWrapper.prepare(this);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapterUtils.prepare(this, mBluetoothAdapter);
 
         findViewById(R.id.progress).setVisibility(View.INVISIBLE);
 
-        if (bluetoothAdapterWrapper.isPrepared()) {
+        if (mBluetoothAdapter.isEnabled()) {
             registerListForFoundedDevices();
             renewChoices();
-            bluetoothAdapterWrapper.startDiscovery();
+            mBluetoothAdapter.startDiscovery();
             registerProgressBar();
         } else {
             // TODO: if bluetooth enabling declined
@@ -96,10 +96,10 @@ public class BlueCharmActivity extends Activity {
         findViewById(R.id.refresh_button).setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
                 Log.d(TAG, "onClick (refresh button)");
-                if (bluetoothAdapterWrapper.isPrepared()) {
-                    bluetoothAdapterWrapper.cancelDiscovery();
+                if (mBluetoothAdapter.isEnabled()) {
+                    mBluetoothAdapter.cancelDiscovery();
                     refreshListView();
-                    bluetoothAdapterWrapper.startDiscovery();
+                    mBluetoothAdapter.startDiscovery();
                 }
             }
         });
@@ -202,7 +202,7 @@ public class BlueCharmActivity extends Activity {
         Bundle bundle = new Bundle();
         bundle.putString(null, SmsNotifier.MAGIC + SmsNotifier.getDelimiter()
                 + SmsNotifier.TYPE + SmsNotifier.getDelimiter()
-                + bluetoothAdapterWrapper.getName() + SmsNotifier.getDelimiter()
+                + mBluetoothAdapter.getName() + SmsNotifier.getDelimiter()
                 + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
