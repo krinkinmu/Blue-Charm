@@ -7,11 +7,11 @@ import android.os.*;
 import android.util.Log;
 
 public abstract class BlueCharmNotifier extends BroadcastReceiver {
-    public static final String TAG = "CHARM_NOTIFIER";
+    private static final String TAG = "CHARM_NOTIFIER";
 
     public static final String MAGIC = "BLUECHARM";
 
-    public static final char DELIMITER = 3;
+    private static final char DELIMITER = 3;
 
     abstract protected String buildMessage(Context context, Intent intent);
 
@@ -19,7 +19,7 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
 
     abstract protected boolean isTargetIntent(Context context, Intent intent);
 
-    public static char getDelimiter() {
+    protected static char getDelimiter() {
         return DELIMITER;
     }
 
@@ -38,8 +38,8 @@ public abstract class BlueCharmNotifier extends BroadcastReceiver {
             Log.e(TAG, "BlueCharmService isn't running");
         }
     }
-
-    private void sendMessage(String msg, IBinder binder) {
+    
+    private static void sendMessage(String msg, IBinder binder) {
         Messenger messenger = new Messenger(binder);
         Message message = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();

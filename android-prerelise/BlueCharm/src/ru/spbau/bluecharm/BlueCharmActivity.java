@@ -10,18 +10,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
 public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
      */
-    public static final String TAG = "BLUE_CHARM_ACTIVITY";
+    private static final String TAG = "BLUE_CHARM_ACTIVITY";
 
     /**
      * Request constant for enabling BT
      */
-    public static final int REQUEST_ENABLE_BT = 1;
-    
+    private static final int REQUEST_ENABLE_BT = 1;
+
     private BluetoothAdapter mBluetoothAdapter;
 
     private BroadcastReceiver mReceiver;
@@ -32,7 +33,7 @@ public class BlueCharmActivity extends Activity {
 
     private BroadcastReceiver mDeviceDiscoveryReceiver;
 
-    private DeviceList mDeviceList;
+    private BluetoothDeviceList mDeviceList;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -54,15 +55,16 @@ public class BlueCharmActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        findViewById(R.id.progress).setVisibility(View.INVISIBLE);
 
         /* Starting service */
         final Intent service = new Intent(this, BlueCharmService.class);
         startService(service);
 
-        mDeviceList = new DeviceList(this);
+        mDeviceList = new BluetoothDeviceList(this, (ListView) findViewById(R.id.blueDevices));
 
         registerProgressBar();
-        
+
         /**
          * Preparing device and filling choice list
          */
@@ -130,21 +132,21 @@ public class BlueCharmActivity extends Activity {
             mBound = false;
         }
     }
-    
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case REQUEST_ENABLE_BT:
-			if (resultCode != RESULT_OK) {
-				Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
-				finish();
-			}
-			break;			
-		default:
-			Log.d("APPLICATION", "Unhandled request code: " + requestCode);		
-			break;
-		}
-	}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode != RESULT_OK) {
+                    Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
+                    finish();
+                }
+                break;
+            default:
+                Log.d("APPLICATION", "Unhandled request code: " + requestCode);
+                break;
+        }
+    }
 
     /**
      * Called when Activity closed
@@ -152,9 +154,9 @@ public class BlueCharmActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        
+
         mBluetoothAdapter.cancelDiscovery();
-        
+
         /* Free broadcast receiver */
         if (mReceiver != null) {
             unregisterReceiver(mReceiver);
@@ -169,15 +171,15 @@ public class BlueCharmActivity extends Activity {
      * Test method initiates Bluetooth notification
      */
     private void notifyTest() {
-        if (!mBound)
+        if (!mBound) {
             return;
+        }
 
         Message msg = Message.obtain(null, BlueCharmService.MSG_NOTIFY_LISTENERS, 0, 0);
         Bundle bundle = new Bundle();
-        bundle.putString(null, SmsNotifier.MAGIC + SmsNotifier.getDelimiter()
-                + SmsNotifier.TYPE + SmsNotifier.getDelimiter()
-                + mBluetoothAdapter.getName() + SmsNotifier.getDelimiter()
-                + getResources().getString(R.string.test_message));
+        char sep = BlueCharmNotifier.getDelimiter();
+        bundle.putString(null, BlueCharmNotifier.MAGIC + sep + SmsNotifier.TYPE + sep
+            + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);
@@ -213,13 +215,13 @@ public class BlueCharmActivity extends Activity {
         mDeviceDiscoveryReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            	if (intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
-            		findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            		findViewById(R.id.refresh_button).setEnabled(false);
-            	} else {
-            		findViewById(R.id.progress).setVisibility(View.INVISIBLE);
-            		findViewById(R.id.refresh_button).setEnabled(true);
-            	}
+                if (intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
+                    findViewById(R.id.progress).setVisibility(View.VISIBLE);
+                    findViewById(R.id.refresh_button).setEnabled(false);
+                } else {
+                    findViewById(R.id.progress).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.refresh_button).setEnabled(true);
+                }
             }
         };
 
@@ -249,12 +251,11 @@ public class BlueCharmActivity extends Activity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
     }
-    
+
     /**
      * Utility method prepares Bluetooth adapter
      */
-    private boolean prepareAdapter(BluetoothAdapter adapter)
-    {
+    private boolean prepareAdapter(BluetoothAdapter adapter) {
         /* Prepare Bluetooth device */
         mBluetoothAdapter = adapter;
         if (mBluetoothAdapter != null) {
