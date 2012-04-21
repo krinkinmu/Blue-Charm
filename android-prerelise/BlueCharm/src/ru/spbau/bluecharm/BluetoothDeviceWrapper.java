@@ -47,12 +47,26 @@ public class BluetoothDeviceWrapper {
         if (this == other) {
             return true;
         }
-        
+
+        boolean result = false;
+
         if (other instanceof BluetoothDeviceWrapper) {
             BluetoothDeviceWrapper that = (BluetoothDeviceWrapper) other;
-            return getAddress().equals(that.getAddress());
+            result = that.canEqual(this) && (getAddress().equals(that.getAddress()));
         }
 
-        return false;
+        return result;
+
+    }
+
+    /**
+     * This is code snippet for equals method. For explanation
+     *
+     * @param other
+     * @return
+     * @see: http://www.artima.com/lejava/articles/equality.html
+     */
+    boolean canEqual(Object other) {
+        return (other instanceof BluetoothDeviceWrapper);
     }
 }

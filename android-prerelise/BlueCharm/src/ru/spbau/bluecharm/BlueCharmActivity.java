@@ -50,6 +50,8 @@ public class BlueCharmActivity extends Activity {
     /**
      * Method called by Android at creation time. It starts BlueCharmService, register Bluetooth interface and start
      * discovering. Then connect to UI events.
+     *
+     * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,7 +181,7 @@ public class BlueCharmActivity extends Activity {
         Bundle bundle = new Bundle();
         char sep = BlueCharmNotifier.getDelimiter();
         bundle.putString(null, BlueCharmNotifier.MAGIC + sep + SmsNotifier.TYPE + sep
-            + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
+                + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);
