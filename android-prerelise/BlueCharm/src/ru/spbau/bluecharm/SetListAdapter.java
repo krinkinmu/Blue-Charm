@@ -6,7 +6,7 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 /**
- * Custom ListView adapter
+ * Custom ListView adapter does not contain duplicates
  */
 public class SetListAdapter<T> extends ArrayAdapter<T> {
     public SetListAdapter(Context context, int textViewResourceId, List<T> objects) {

@@ -61,9 +61,7 @@ class Server(threading.Thread):
 		server_sock.listen(1)
 		pynotify.init(self.APP_NAME)
 		while ( True ) :
-			print "wait"
 			client_sock,address = server_sock.accept()
-			print "recieve"
 
 			data = client_sock.recv(1024)
 

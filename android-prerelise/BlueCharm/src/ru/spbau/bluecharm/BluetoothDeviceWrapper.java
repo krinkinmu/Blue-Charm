@@ -6,21 +6,37 @@ import android.bluetooth.BluetoothDevice;
  * Immortal class... hmmm... it's magic... BlueCharm!
  */
 public class BluetoothDeviceWrapper {
-    private String mName;
+    private final String mName;
 
-    private String mAddress;
+    private final String mAddress;
 
+    /**
+     * Constructs wrapper from bluetooth device
+     *
+     * @param device Bluetooth device
+     */
     public BluetoothDeviceWrapper(BluetoothDevice device) {
         mName = device.getName();
         mAddress = device.getAddress();
     }
 
+    /**
+     * Constructs wrapper from data string
+     *
+     * @param string Data string
+     */
     public BluetoothDeviceWrapper(String string) {
         String[] contents = string.split("\n");
         mName = contents[0];
         mAddress = contents[1];
     }
 
+    /**
+     * Constructs wrapper from name and address of device
+     *
+     * @param name    Name of device
+     * @param address MAC address of device
+     */
     public BluetoothDeviceWrapper(String name, String address) {
         mName = name;
         mAddress = address;
@@ -38,6 +54,11 @@ public class BluetoothDeviceWrapper {
         return mName;
     }
 
+    /**
+     * String representation of device
+     *
+     * @return String representation of device
+     */
     public String toDataString() {
         return mName + "\n" + mAddress;
     }
@@ -47,12 +68,26 @@ public class BluetoothDeviceWrapper {
         if (this == other) {
             return true;
         }
-        
+
+        boolean result = false;
+
         if (other instanceof BluetoothDeviceWrapper) {
             BluetoothDeviceWrapper that = (BluetoothDeviceWrapper) other;
-            return getAddress().equals(that.getAddress());
+            result = that.canEqual(this) && (getAddress().equals(that.getAddress()));
         }
 
-        return false;
+        return result;
+
+    }
+
+    /**
+     * This is code snippet for equals method. For explanations read
+     * article http://www.artima.com/lejava/articles/equality.html
+     *
+     * @param other Object to compare
+     * @return Can be equal or not
+     */
+    boolean canEqual(Object other) {
+        return (other instanceof BluetoothDeviceWrapper);
     }
 }

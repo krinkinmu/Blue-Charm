@@ -17,12 +17,18 @@ public class BluetoothDeviceList {
 
     private final ArrayList<BluetoothDeviceWrapper> mData = new ArrayList<BluetoothDeviceWrapper>();
 
-    private ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
+    private final ArrayAdapter<BluetoothDeviceWrapper> mArrayAdapter;
 
-    private ListView mListView;
+    private final ListView mListView;
 
-    private Activity mActivity;
+    private final Activity mActivity;
 
+    /**
+     * Constructs device list for activity and list view
+     *
+     * @param activity Activity
+     * @param listView List View
+     */
     public BluetoothDeviceList(Activity activity, ListView listView) {
         /* Bind View with Model */
         mArrayAdapter = new SetListAdapter<BluetoothDeviceWrapper>(activity,
@@ -33,7 +39,7 @@ public class BluetoothDeviceList {
     }
 
     /**
-     * Initiate Bluetooth device discovering
+     * Clears list and add only saved devices.
      */
     public void refreshListView() {
         mArrayAdapter.clear();
@@ -41,7 +47,7 @@ public class BluetoothDeviceList {
     }
 
     /**
-     * Update user chosen devices in ListView
+     * Update user chosen devices in list view
      */
     public void renewChoices() {
         mListView.clearChoices();
@@ -55,10 +61,20 @@ public class BluetoothDeviceList {
         }
     }
 
+    /**
+     * Returns List View object
+     *
+     * @return List View object
+     */
     public ListView getListView() {
         return mListView;
     }
 
+    /**
+     * Returns list of string representations of devices.
+     *
+     * @return List of string representations of devices.
+     */
     public ArrayList<String> getDevices() {
         ArrayList<String> devices = new ArrayList<String>();
         SparseBooleanArray checked = mListView.getCheckedItemPositions();
@@ -70,6 +86,11 @@ public class BluetoothDeviceList {
         return devices;
     }
 
+    /**
+     * Adds new bluetooth device to list
+     *
+     * @param object Bluetooth device
+     */
     public void add(BluetoothDeviceWrapper object) {
         mArrayAdapter.add(object);
     }

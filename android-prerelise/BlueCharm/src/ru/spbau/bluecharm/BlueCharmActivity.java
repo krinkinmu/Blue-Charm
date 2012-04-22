@@ -12,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+/**
+ * Main activity of application
+ */
 public class BlueCharmActivity extends Activity {
     /**
      * Debugging tag symbol
@@ -35,7 +38,7 @@ public class BlueCharmActivity extends Activity {
 
     private BluetoothDeviceList mDeviceList;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             mService = new Messenger(service);
             mBound = true;
@@ -50,11 +53,14 @@ public class BlueCharmActivity extends Activity {
     /**
      * Method called by Android at creation time. It starts BlueCharmService, register Bluetooth interface and start
      * discovering. Then connect to UI events.
+     *
+     * @param savedInstanceState Saved Instance State
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        /* Making progress bar invisible. Need to find default style param in main.xml */
         findViewById(R.id.progress).setVisibility(View.INVISIBLE);
 
         /* Starting service */
@@ -63,7 +69,10 @@ public class BlueCharmActivity extends Activity {
 
         mDeviceList = new BluetoothDeviceList(this, (ListView) findViewById(R.id.blueDevices));
 
-        registerProgressBar();
+        /**
+         * Registering on discovery events
+         */
+        registerOnDiscoveryEvents();
 
         /**
          * Preparing device and filling choice list
@@ -133,17 +142,25 @@ public class BlueCharmActivity extends Activity {
         }
     }
 
+    /**
+     * Catches result from turning on bluetooth activity. If bluetooth wasn't
+     * enabled by user finishes execution.
+     *
+     * @param requestCode Some request code.
+     * @param resultCode  Is bluetooth was enabled by user?
+     * @param data        Not used
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_ENABLE_BT:
                 if (resultCode != RESULT_OK) {
-                    Log.d("BLUETOOTH", "Bluetooth didn't turn on: " + resultCode);
+                    Log.d(TAG, "Bluetooth didn't turn on: " + resultCode);
                     finish();
                 }
                 break;
             default:
-                Log.d("APPLICATION", "Unhandled request code: " + requestCode);
+                Log.d(TAG, "Unhandled request code: " + requestCode);
                 break;
         }
     }
@@ -179,17 +196,17 @@ public class BlueCharmActivity extends Activity {
         Bundle bundle = new Bundle();
         char sep = BlueCharmNotifier.getDelimiter();
         bundle.putString(null, BlueCharmNotifier.MAGIC + sep + SmsNotifier.TYPE + sep
-            + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
+                + mBluetoothAdapter.getName() + sep + getResources().getString(R.string.test_message));
         msg.setData(bundle);
         try {
             mService.send(msg);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Can't send message to service.");
         }
     }
 
     /**
-     * Save user choice in local database
+     * Send chosen devices to service which saves user choice in local database
      */
     private void saveDevices() {
         if (!mBound) {
@@ -209,9 +226,9 @@ public class BlueCharmActivity extends Activity {
     }
 
     /**
-     * Bind ProgressBar with Bluetooth device discovering
+     * Bind UI control elements with Bluetooth device discovering events
      */
-    private void registerProgressBar() {
+    private void registerOnDiscoveryEvents() {
         mDeviceDiscoveryReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -232,18 +249,18 @@ public class BlueCharmActivity extends Activity {
     }
 
     /**
-     * Bind ListView with Bluetooth device discovering
+     * Bind ListView with Bluetooth device found event
      */
     private void registerListForFoundedDevices() {
-        // Create a BroadcastReceiver for ACTION_FOUND
+        /* Create a BroadcastReceiver for ACTION_FOUND */
         mReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                // When discovery finds a device
+                /* When discovery finds a device */
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Get the BluetoothDevice object from the Intent
+                    /* Get the BluetoothDevice object from the Intent */
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    // Add the name and address to an array adapter to show in a ListView
+                    /* Add the name and address to an array adapter to show in a ListView */
                     mDeviceList.add(new BluetoothDeviceWrapper(device));
                 }
             }
