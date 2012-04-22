@@ -9,7 +9,7 @@ import counter
 
 class Tray(threading.Thread):
 
-	__path = "/home/sergey/softpract/Blue-Charm/applets/rc/"
+	__path = "../rc/"
 	__noCallsImageFile = __path + "no_calls.png"
 	__missedCallsImageFile = __path + "missed_call.png"
 	__readImageFile = __path + "checkbox.png"
