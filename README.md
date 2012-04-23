@@ -1,4 +1,5 @@
 Blue-Charm
 ==========
 
-Android Bluetooth Notificator
+See projects homepage for details:
+https://github.com/krinkinmu/Blue-Charm/wiki
