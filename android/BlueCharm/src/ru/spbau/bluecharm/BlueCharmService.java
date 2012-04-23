@@ -147,7 +147,7 @@ public class BlueCharmService extends Service {
         try {
             /**
              * Bluetooth bug with HTC devices
-             * @see: https://github.com/krinkinmu/Blue-Charm/wiki/Socket-opening-on-HTC-devices
+             * @see: https://github.com/krinkinmu/Blue-Charm/issues/17
              */
             Method m = device.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
             socket = (BluetoothSocket) m.invoke(device, SERVER_CHANNEL);
