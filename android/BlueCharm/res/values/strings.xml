@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, BlueCharmActivity!</string>
+    <string name="app_name">BlueCharm</string>
+    <string name="refresh_label">Refresh</string>
+    <string name="save_label">Save</string>
+    <string name="exit_label">Stop service</string>
+    <string name="test_label">Test</string>
+    <string name="bluetooth_device_label">Bluetooth devices</string>
+    <string name="test_message">Test message</string>
+
+</resources>
