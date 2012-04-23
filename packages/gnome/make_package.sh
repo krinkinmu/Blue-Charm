@@ -12,7 +12,7 @@ DEB_CONTROL=$DEB_DEBIAN/control
 DEB_RC=$DEB_ROOT/usr/share/bluecharm/rc
 DEB_BIN=$DEB_ROOT/usr/bin
 DEB_UTL=$DEB_BIN/bluecharm
-DEB_ETC=$DEB_ROOT/ets/xdg/autostart
+DEB_ETC=$DEB_ROOT/etc/xdg/autostart
 
 SRC_ROOT=../../applets
 SRC_COMMON=$SRC_ROOT/common
@@ -23,7 +23,7 @@ rm -rf $DEB_ROOT
 
 mkdir -p $DEB_DEBIAN || exit 1
 mkdir -p $DEB_RC || exit 1
-mkdir -p $DEB_BIN || exit 1
+mkdir -p $DEB_UTL || exit 1
 mkdir -p $DEB_ETC || exit 1
 
 touch $DEB_ETC/indicator-bluecharm.desktop
@@ -33,7 +33,7 @@ echo "Package: bluecharm-indicator-applet
 Version: $VERSION
 Architecture: all
 Maintainer: Krinkin Mike <krinkin.m.u@gmail.com>
-Depends: python
+Depends: python, python-bluez, python-gtk2
 Section: python
 Priority: extra
 Description: Unity applet for BlueCharm notifier" > $DEB_CONTROL || exit 1
