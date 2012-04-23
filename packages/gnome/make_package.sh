@@ -42,8 +42,8 @@ echo "#!/bin/bash
 python /usr/bin/bluecharm/main.py" > $DEB_BIN/bluecharm-applet.sh || exit 1
 chmod 0775 $DEB_POSTINST
 
-cp $SRC_COMMON/* $DEB_BIN
-cp $SRC_GNOME/* $DEB_BIN
+cp $SRC_COMMON/* $DEB_UTL
+cp $SRC_GNOME/* $DEB_UTL
 cp $SRC_RC/* $DEB_RC
 
 dpkg -b $DEB_ROOT $DEB_OUT/$DEB_NAME
